@@ -1,0 +1,52 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "a7cd46b53d44652c7761bb0cb9e634f5",
+    "content-hash": "196c382b610cd7cf55e9993eead08a79",
+    "packages": [
+        {
+            "name": "davidalger/devenv",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/davidalger/devenv.git",
+                "reference": "5a10962dad58e6a20ebff6f31145221247d266ec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/davidalger/devenv/zipball/5a10962dad58e6a20ebff6f31145221247d266ec",
+                "reference": "5a10962dad58e6a20ebff6f31145221247d266ec",
+                "shasum": ""
+            },
+            "type": "library",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "David Alger",
+                    "homepage": "http://davidalger.com"
+                }
+            ],
+            "description": "Vagrant Development Environment for Mac OS X Hosts",
+            "support": {
+                "source": "https://github.com/davidalger/devenv/tree/develop",
+                "issues": "https://github.com/davidalger/devenv/issues"
+            },
+            "time": "2015-12-14 18:49:50"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "beta",
+    "stability-flags": {
+        "davidalger/devenv": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

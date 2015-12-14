@@ -1,0 +1,19 @@
+{
+    "name": "davidalger/cloud",
+    "authors": [
+        {
+            "name": "David Alger",
+            "homepage": "http://davidalger.com"
+        }
+    ],
+    "repositories": {
+        "devenv": {
+            "type": "vcs",
+            "url": "git@github.com:davidalger/devenv.git"
+        }
+    },
+    "minimum-stability": "beta",
+    "require": {
+        "davidalger/devenv": "dev-develop"
+    }
+}
