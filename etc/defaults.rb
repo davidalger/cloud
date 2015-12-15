@@ -28,7 +28,7 @@ if not defined? CONF_DO_REGION
 end
 
 if not defined? CONF_DO_SIZE
-  CONF_DO_SIZE = '512mb'
+  CONF_DO_SIZE = '2gb'
 end
 
 if not defined? CONF_DO_BOX_NAME

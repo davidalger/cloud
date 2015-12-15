@@ -10,46 +10,34 @@
 require_relative 'etc/config.rb'
 require_relative 'etc/defaults.rb'
 
+# setup environment constants
 BASE_DIR = File.dirname(__FILE__)
 VAGRANT_DIR = '/vagrant'
 DEVENV_PATH = 'vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
+# verify composer dependencies have been installed
 if not File.exist?(DEVENV_PATH + '/vagrant.rb')
   raise "Please run 'composer install' before running vagrant commands."
 end
 
+# load vendor libs
 $LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH)
 require 'lib/provision'
+
+# load built-in libs
+require_relative 'lib/machine.rb'
 
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
 Vagrant.configure(2) do |conf|
+  configure_common conf
 
-  conf.vm.provider 'digitalocean'
-  conf.vm.hostname = 'cloud.' + CLOUD_DOMAIN
-
-  conf.vm.provider :digital_ocean do | provider, override |
-    provider.token = CONF_DO_TOKEN
-    provider.image = CONF_DO_IMAGE
-    provider.region = CONF_DO_REGION
-    provider.size = CONF_DO_SIZE
-
-    override.ssh.private_key_path = CONF_DO_KEY_PATH
-    override.vm.box = CONF_DO_BOX_NAME
-    override.vm.box_url = CONF_DO_BOX_URL
+  conf.vm.define :cloud do |node|
+    configure_manager_vm node, host: 'cloud', php_version: 70
   end
-
-  # these vms are not considered secure for purposes of agent forwarding
-  conf.ssh.forward_agent = false
-
-  # copy in devenv stuff without overwriting any existing files
-  conf.vm.provision :shell do |conf|
-    conf.name = 'build'
-    conf.inline = "rsync -a --ignore-existing #{VAGRANT_DIR}/#{DEVENV_PATH}/ #{VAGRANT_DIR}/"
+  
+  conf.vm.define :demo do |node|
+    configure_fullstack_vm node, host: 'demo'
   end
-
-  bootstrap_sh(conf, ['node', 'web'], { php_version: 70 })
-  service(conf, { start: ['redis', 'httpd', 'nginx'] })
-
 end
