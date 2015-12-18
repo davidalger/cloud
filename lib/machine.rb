@@ -39,7 +39,7 @@ def configure_manager_vm (node, host: nil, ip: nil, php_version: nil)
     provider.size = '512mb'
   end
 
-  bootstrap_sh(node, ['node', 'web'], { php_version: php_version })
+  bootstrap_sh(node, ['node', 'manager', 'web'], { php_version: php_version })
   service(node, { start: ['redis', 'httpd', 'nginx'] })
 end
 
