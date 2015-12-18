@@ -32,13 +32,13 @@ require_relative 'lib/machine.rb'
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
 Vagrant.configure(2) do |conf|
-  configure_common conf
+  machine_common conf
 
   conf.vm.define :cloud do |node|
-    configure_manager_vm node, host: 'cloud', php_version: 70
+    machine_manager_vm node, host: 'cloud', php_version: 70
   end
   
   conf.vm.define :demo do |node|
-    configure_fullstack_vm node, host: 'demo'
+    machine_fullstack_vm node, host: 'demo'
   end
 end

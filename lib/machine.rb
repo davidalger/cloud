@@ -7,7 +7,7 @@
  # http://davidalger.com/contact/
  ##
 
-def configure_common (conf)
+def machine_common (conf)
   conf.vm.box = 'bento/centos-6.7'  # overriden for some providers
 
   # conf.vm.provider 'digitalocean'
@@ -32,7 +32,7 @@ def configure_common (conf)
   end
 end
 
-def configure_manager_vm (node, host: nil, ip: nil, php_version: nil)
+def machine_manager_vm (node, host: nil, ip: nil, php_version: nil)
   node.vm.hostname = host + '.' + CLOUD_DOMAIN
 
   node.vm.provider :digital_ocean do | provider, override |
@@ -43,7 +43,7 @@ def configure_manager_vm (node, host: nil, ip: nil, php_version: nil)
   service(node, { start: ['redis', 'httpd', 'nginx'] })
 end
 
-def configure_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
+def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
   node.vm.hostname = host + '.' + CLOUD_DOMAIN
 
   bootstrap_sh(node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version })
