@@ -1,3 +1,4 @@
 /.vagrant/
 /vendor/
 /etc/config.rb
+**/composer/auth.json
