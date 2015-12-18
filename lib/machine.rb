@@ -28,7 +28,7 @@ def configure_common (conf)
   # copy in devenv stuff without overwriting any existing files
   conf.vm.provision :shell do |conf|
     conf.name = 'build'
-    conf.inline = "rsync -a --ignore-existing #{VAGRANT_DIR}/#{DEVENV_PATH}/ #{VAGRANT_DIR}/"
+    conf.inline = "rsync -a --ignore-existing #{VENDOR_BASE}/#{DEVENV_PATH}/{etc,scripts} #{VAGRANT_DIR}/"
   end
 end
 

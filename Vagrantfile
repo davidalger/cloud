@@ -12,7 +12,8 @@ require_relative 'etc/defaults.rb'
 
 # setup environment constants
 BASE_DIR = File.dirname(__FILE__)
-VAGRANT_DIR = '/vagrant'
+VENDOR_BASE = '/vagrant'
+VAGRANT_DIR = '/vagrant/machine'
 DEVENV_PATH = 'vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
