@@ -28,6 +28,7 @@ require 'lib/provision'
 
 # load built-in libs
 require_relative 'lib/machine.rb'
+require_relative 'lib/magento.rb'
 
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
@@ -40,5 +41,7 @@ Vagrant.configure(2) do |conf|
   
   conf.vm.define :demo do |node|
     machine_fullstack_vm node, host: 'demo'
+    
+    mage2_install node, host: 'demo.classyllama.net', db_name: 'mage2_demo'
   end
 end
