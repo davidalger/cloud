@@ -23,13 +23,13 @@ def mage2_install (node, host: nil, db_name: nil, db_host: 'localhost', db_user:
     conf.inline = "
       set -x
       
-      composer create-project --prefer-dist --no-dev -q --repository-url=https://repo.magento.com/ \
+      composer create-project --prefer-dist -q --repository-url=https://repo.magento.com/ \
           magento/project-community-edition /var/www/magento2
       
       cd /var/www/magento2
       chmod +x bin/magento
       bin/magento sampledata:deploy -q
-      composer update --prefer-dist --no-dev -q
+      composer update --prefer-dist -q
       
       mysql -e 'create database #{db_name}'
       bin/magento setup:install -q --base-url=http://#{host} --backend-frontname=backend \
@@ -42,7 +42,7 @@ def mage2_install (node, host: nil, db_name: nil, db_host: 'localhost', db_user:
       
       bin/magento deploy:mode:set production --skip-compilation -q
       rm -rf var/di/ var/generation/
-      bin/magento setup:di:compile -q
+      bin/magento setup:di:compile-multi-tenant -q
       bin/magento setup:static-content:deploy -q
       bin/magento cache:flush -q
       
