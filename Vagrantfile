@@ -36,11 +36,6 @@ Vagrant.require_version '>= 1.7.4'
 Vagrant.configure(2) do |conf|
   machine_common conf
 
-  # declare management node
-  conf.vm.define :cloud do |node|
-    machine_manager_vm node, host: 'cloud', php_version: 70
-  end
-
   # load config declarations for each site in etc/conf.d
   Dir.foreach BASE_DIR + '/etc/conf.d' do |file|
     if !File.directory? file

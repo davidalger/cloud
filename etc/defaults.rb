@@ -15,6 +15,10 @@ if not defined? CONF_DO_KEY_PATH
   CONF_DO_KEY_PATH = '~/.ssh/id_rsa'
 end
 
+if not defined? CONF_DO_KEY_NAME
+  CONF_DO_KEY_NAME = 'Vagrant'
+end
+
 if not defined? CONF_DO_TOKEN
   raise "Missing configuration for CONF_DO_TOKEN. This must be set in config.rb"
 end

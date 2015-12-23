@@ -16,6 +16,7 @@ def machine_common (conf)
     provider.image = CONF_DO_IMAGE
     provider.region = CONF_DO_REGION
     provider.size = CONF_DO_SIZE
+    provider.ssh_key_name = CONF_DO_KEY_NAME
 
     override.ssh.private_key_path = CONF_DO_KEY_PATH
     override.vm.box = CONF_DO_BOX_NAME
@@ -32,20 +33,9 @@ def machine_common (conf)
   end
 end
 
-def machine_manager_vm (node, host: nil, ip: nil, php_version: nil)
-  node.vm.hostname = host + '.' + CLOUD_DOMAIN
-
-  node.vm.provider :digital_ocean do | provider, override |
-    provider.size = '512mb'
-  end
-
-  bootstrap_sh(node, ['node', 'manager', 'web'], { php_version: php_version })
-  service(node, { start: ['redis', 'httpd', 'nginx'] })
-end
-
 def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
   node.vm.hostname = host + '.' + CLOUD_DOMAIN
 
-  bootstrap_sh(node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version })
-  service(node, { start: ['redis', 'mysqld', 'httpd', 'nginx'] })
+  bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
+  service(node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] })
 end

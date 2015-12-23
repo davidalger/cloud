@@ -18,6 +18,8 @@ def mage2_install (node, host: nil, db_name: nil, db_host: 'localhost', db_user:
     raise 'db_name is a required argument'
   end
   
+  host = host + '.' + CLOUD_DOMAIN
+  
   node.vm.provision :shell do |conf|
     conf.name = 'mage2_install'
     conf.inline = "
