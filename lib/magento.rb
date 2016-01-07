@@ -7,7 +7,10 @@
  # http://davidalger.com/contact/
  ##
 
-def mage2_install (node, host: nil, db_name: nil, db_host: 'localhost', db_user: 'root', db_pass: nil)
+@composer_auth_verified = false
+
+def mage2_install node, host: nil, db_name: nil, db_host: 'localhost', db_user: 'root', db_pass: nil
+  verify_composer_auth_file
   
   # build flag for db password if given
   if db_pass
@@ -52,5 +55,17 @@ def mage2_install (node, host: nil, db_name: nil, db_host: 'localhost', db_user:
       chmod -R 777 /var/www/magento2
       chmod -R g+s /var/www/magento2
     "
+  end
+end
+
+def verify_composer_auth_file
+  if @composer_auth_verified
+    return true
+  end
+  
+  if File.exist? BASE_DIR + '/etc/composer/auth.json'
+    @composer_auth_verified = true
+  else
+    raise 'Error: The configuration requires a composer auth file be present at ' + BASE_DIR + '/etc/composer/auth.json'
   end
 end
