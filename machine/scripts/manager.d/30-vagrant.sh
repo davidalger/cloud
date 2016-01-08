@@ -15,3 +15,4 @@ set -e
 
 yum install -y vagrant
 vagrant plugin install vagrant-digitalocean
+vagrant plugin install vagrant-triggers
