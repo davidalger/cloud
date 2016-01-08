@@ -29,7 +29,7 @@ def mage2_install node, host: nil, db_name: nil, db_host: 'localhost', db_user: 
       set -x
       
       composer create-project --prefer-dist -q --repository-url=https://repo.magento.com/ \
-          magento/project-community-edition /var/www/magento2
+          magento/project-enterprise-edition /var/www/magento2
       
       cd /var/www/magento2
       chmod +x bin/magento
