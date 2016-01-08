@@ -22,6 +22,15 @@ if not File.exist?(DEVENV_PATH + '/vagrant.rb')
   raise "Please run 'composer install' before running vagrant commands."
 end
 
+# verify our plugin dependencies are installed
+unless Vagrant.has_plugin?("vagrant-digitalocean")
+  raise 'Error: please run `vagrant plugin install vagrant-digitalocean` and try again'
+end
+
+unless Vagrant.has_plugin?("vagrant-triggers")
+  raise 'Error: please run `vagrant plugin install vagrant-triggers` and try again'
+end
+
 # load vendor libs
 $LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH)
 require 'lib/provision'
@@ -41,5 +50,29 @@ Vagrant.configure(2) do |conf|
     if !File.directory? file
       include_conf BASE_DIR + '/etc/conf.d/' + file, conf
     end
+  end
+  
+  # verify with user before allowing a halt to take place
+  conf.trigger.before :halt do
+    confirm = nil
+    until ["Y", "y", "N", "n"].include?(confirm)
+      confirm = ask "Are you sure you want to halt the VM? [y/N] "
+    end
+    exit unless confirm.upcase == "Y"
+  end
+  
+  # verify with user before allowing a rebuild to take place
+  conf.trigger.before :rebuild do
+    confirm = nil
+    until ["Y", "y", "N", "n"].include?(confirm)
+      puts "The rebuild command is a potentially destructive operation. All data on the VM will be erased!"
+      confirm = ask "Are you sure you want to rebuild the VM? [y/N] "
+    end
+    exit unless confirm.upcase == "Y"
+  end
+  
+  # kill vagrant destroy command as a safegaurd
+  conf.trigger.reject :destroy do
+    puts "Sorry, that command is not allowed from the vagrant tool! Please login to console to destroy a VM"
   end
 end
