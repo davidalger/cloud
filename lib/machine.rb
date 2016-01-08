@@ -17,6 +17,7 @@ def machine_common (conf)
     provider.region = CONF_DO_REGION
     provider.size = CONF_DO_SIZE
     provider.ssh_key_name = CONF_DO_KEY_NAME
+    provider.backups_enabled = true
 
     override.ssh.private_key_path = CONF_DO_KEY_PATH
     override.vm.box = CONF_DO_BOX_NAME
