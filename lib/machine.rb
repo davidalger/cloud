@@ -27,7 +27,7 @@ def machine_common (conf)
   conf.ssh.forward_agent = false
 
   # copy in devenv stuff without overwriting any existing files
-  conf.vm.provision :shell do |conf|
+  conf.vm.provision :shell, run: 'always' do |conf|
     conf.name = 'build'
     conf.inline = "rsync -a --ignore-existing #{REMOTE_BASE}/#{DEVENV_PATH}/{etc,scripts} #{VAGRANT_DIR}/"
   end
