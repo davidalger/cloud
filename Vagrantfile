@@ -18,7 +18,7 @@ DEVENV_PATH = 'vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
 # verify composer dependencies have been installed
-if not File.exist?(DEVENV_PATH + '/vagrant.rb')
+unless File.exist?(DEVENV_PATH + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
   raise "Please run 'composer install' before running vagrant commands."
 end
 
@@ -31,14 +31,15 @@ unless Vagrant.has_plugin?("vagrant-triggers")
   raise 'Error: please run `vagrant plugin install vagrant-triggers` and try again'
 end
 
-# load vendor libs
-$LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH)
-require 'lib/provision'
+# configure load path to include devenv libs and our own libs
+$LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH + '/lib')
+$LOAD_PATH.unshift(BASE_DIR + '/lib')
 
-# load built-in libs
-require_relative 'lib/utils.rb'
-require_relative 'lib/machine.rb'
-require_relative 'lib/magento.rb'
+# import our libraries
+require 'provision'
+require 'utils'
+require 'machine'
+require 'magento'
 
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
@@ -72,7 +73,9 @@ Vagrant.configure(2) do |conf|
   end
   
   # kill vagrant destroy command as a safegaurd
-  conf.trigger.reject :destroy do
-    puts "Sorry, that command is not allowed from the vagrant tool! Please login to console to destroy a VM"
+  unless File.exist? BASE_DIR + '/etc/assassin.flag'
+    conf.trigger.reject :destroy do
+      puts "Sorry, that command is not allowed from the vagrant tool! Please login to console to destroy a VM"
+    end
   end
 end

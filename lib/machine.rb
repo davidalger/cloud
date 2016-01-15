@@ -26,10 +26,25 @@ def machine_common (conf)
   # these vms are not considered secure for purposes of agent forwarding
   conf.ssh.forward_agent = false
 
-  # copy in devenv stuff without overwriting any existing files
+  # configuration on default vagrant synced folder
+  conf.vm.synced_folder '.', REMOTE_BASE, type: 'rsync', rsync__exclude: [
+    '.git/',
+    'composer.json',
+    'composer.lock',
+    'assassin.flag',
+    'README.md',
+    # 'config.rb',
+    # 'etc/conf.d/'
+  ]
+
+  # prepare node for performing actual provisioning on itself and/or other nodes
   conf.vm.provision :shell, run: 'always' do |conf|
-    conf.name = 'build'
-    conf.inline = "rsync -a --ignore-existing #{REMOTE_BASE}/#{DEVENV_PATH}/{etc,scripts} #{VAGRANT_DIR}/"
+    conf.name = 'build.sh'
+    conf.inline = %-
+      export REMOTE_BASE=#{REMOTE_BASE};
+      export VAGRANT_DIR=#{VAGRANT_DIR};
+      #{VAGRANT_DIR}/scripts/build.sh
+    -
   end
 end
 

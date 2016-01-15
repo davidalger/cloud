@@ -1,5 +1,5 @@
 /.vagrant/
 /vendor/
 /etc/config.rb
-/etc/ssh/*
+/etc/ssh/authorized_keys
 **/composer/auth.json

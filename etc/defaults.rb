@@ -11,6 +11,10 @@ unless defined? CLOUD_DOMAIN
   raise "Missing configuration for CLOUD_DOMAIN. This must be set in config.rb"
 end
 
+unless defined? CLOUD_CONFIG
+  raise "Missing configuration for CLOUD_CONFIG. This must be set in config.rb and should be an ssh git repo url"
+end
+
 unless defined? CONF_DO_KEY_PATH
   CONF_DO_KEY_PATH = '~/.ssh/id_rsa'
 end
