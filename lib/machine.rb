@@ -32,6 +32,21 @@ def machine_common (conf)
     conf.name = 'build'
     conf.inline = "rsync -a --ignore-existing #{REMOTE_BASE}/#{DEVENV_PATH}/{etc,scripts} #{VAGRANT_DIR}/"
   end
+  
+  # authorize list of default public keys on new node
+  conf.vm.provision :shell do |conf|
+    conf.name = 'authorized_keys'
+    conf.inline = "
+      if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
+          if [[ ! -d ~/.ssh ]]; then
+              mkdir ~/.ssh
+              chmod 700 ~/.ssh
+          fi
+          cp /vagrant/etc/ssh/authorized_keys ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
+      fi
+    "
+  end
 end
 
 def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
