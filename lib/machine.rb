@@ -10,7 +10,6 @@
 def machine_common (conf)
   conf.vm.box = 'bento/centos-6.7'  # overriden for some providers
 
-  # conf.vm.provider 'digitalocean'
   conf.vm.provider :digital_ocean do | provider, override |
     provider.token = CONF_DO_TOKEN
     provider.image = CONF_DO_IMAGE
@@ -31,21 +30,6 @@ def machine_common (conf)
   conf.vm.provision :shell, run: 'always' do |conf|
     conf.name = 'build'
     conf.inline = "rsync -a --ignore-existing #{REMOTE_BASE}/#{DEVENV_PATH}/{etc,scripts} #{VAGRANT_DIR}/"
-  end
-  
-  # authorize list of default public keys on new node
-  conf.vm.provision :shell do |conf|
-    conf.name = 'authorized_keys'
-    conf.inline = "
-      if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
-          if [[ ! -d ~/.ssh ]]; then
-              mkdir ~/.ssh
-              chmod 700 ~/.ssh
-          fi
-          cp /vagrant/etc/ssh/authorized_keys ~/.ssh/authorized_keys
-          chmod 600 ~/.ssh/authorized_keys
-      fi
-    "
   end
 end
 
