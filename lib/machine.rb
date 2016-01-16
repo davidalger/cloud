@@ -33,8 +33,9 @@ def machine_common (conf)
     'composer.lock',
     'assassin.flag',
     'README.md',
-    # 'config.rb',
-    # 'etc/conf.d/'
+    'config.rb',
+    'etc/conf.d/',
+    'etc/data.d/'
   ]
 
   # prepare node for performing actual provisioning on itself and/or other nodes
@@ -50,7 +51,7 @@ end
 
 def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
   node.vm.hostname = host + '.' + CLOUD_DOMAIN
-
+  
   bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
   service(node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] })
 end

@@ -16,7 +16,8 @@ fi
 
 # pull vendor assets into place, then cleanup
 mkdir -p $VAGRANT_DIR/bin/
-rsync -a --ignore-existing $REMOTE_BASE/vendor/davidalger/devenv/vagrant/{etc,scripts} $VAGRANT_DIR/
+rsync -a --ignore-existing $REMOTE_BASE/vendor/davidalger/devenv/vagrant/{etc,scripts} $VAGRANT_DIR/ \
+    --exclude 'etc/hosts'
 rsync -a --ignore-existing $REMOTE_BASE/vendor/davidalger/devenv/vagrant/lib/ $REMOTE_BASE/lib/
 cp $REMOTE_BASE/vendor/davidalger/devenv/vagrant/scripts/bootstrap.sh $VAGRANT_DIR/
 cp $REMOTE_BASE/vendor/davidalger/devenv/vagrant/bin/magento $VAGRANT_DIR/bin/

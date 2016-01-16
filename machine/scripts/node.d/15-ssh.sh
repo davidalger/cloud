@@ -15,7 +15,8 @@ set -e
 
 ssh-keygen -N '' -t rsa -f ~/.ssh/id_rsa
 
-if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
-    cp /vagrant/etc/ssh/authorized_keys ~/.ssh/authorized_keys
-    chmod 600 ~/.ssh/authorized_keys
+if [[ -f /vagrant/etc/authorized_keys ]]; then
+    cp /vagrant/etc/authorized_keys ~/.ssh/authorized_keys
 fi
+cat ~/.ssh/id_rsa.pub >> /vagrant/etc/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
