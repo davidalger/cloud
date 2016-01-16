@@ -7,57 +7,33 @@
  # http://davidalger.com/contact/
  ##
 
-@composer_auth_verified = false
-
-def mage2_install node, host: nil, db_name: nil, db_host: 'localhost', db_user: 'root', db_pass: nil
-  verify_composer_auth_file
-  
-  # build flag for db password if given
-  if db_pass
-    db_pass = '--db-pass=' + db_pass
-  end
-  
-  if not db_name
-    raise 'db_name is a required argument'
-  end
-  
+def install_magento2 node, host: nil, path: nil, database: nil, enterprise: false, sampledata: true
   host = host + '.' + CLOUD_DOMAIN
+  flag_ee = enterprise ? ' -e ' : nil
+  flag_sd = sampledata ? ' -d ' : nil
   
   node.vm.provision :shell do |conf|
-    conf.name = 'mage2_install'
+    conf.name = "install_magento2"
     conf.inline = "
-      set -x
+      set -e
       
       export SITES_DIR=/var/www
       export DB_HOST=localhost
+      export DB_NAME=#{database}
+      export INSTALL_DIR=/var/www/magento2/#{path}
       
-      m2setup.sh -d -e --hostname=m2.demo
+      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path}
       
-      rmdir /var/www/html
-      ln -s /var/www/m2.demo/pub /var/www/html
+      ln -s $INSTALL_DIR/pub /var/www/html/#{path}
+      ln -s $INSTALL_DIR/pub /var/www/html/#{path}/pub     # todo: remove temp fix when GH Issue #2711 is resolved
       
-      find /var/www/m2.demo -type d -exec chmod 770 {} \;
-      find /var/www/m2.demo -type f -exec chmod 660 {} \;
+      find $INSTALL_DIR -type d -exec chmod 770 {} +
+      find $INSTALL_DIR -type f -exec chmod 660 {} +
       
-      chmod -R g+s /var/www/m2.demo
-      chown -R apache:apache /var/www/m2.demo
+      chmod -R g+s $INSTALL_DIR
+      chown -R apache:apache $INSTALL_DIR
       
-      chmod +x /var/www/m2.demo/bin/magento
+      chmod +x $INSTALL_DIR/bin/magento
     "
-  end
-end
-
-# todo: need to fix this
-def verify_composer_auth_file
-  return true
-  
-  if @composer_auth_verified
-    return true
-  end
-  
-  if File.exist? BASE_DIR + '/etc/composer/auth.json'
-    @composer_auth_verified = true
-  else
-    raise 'Error: The configuration requires a composer auth file be present at ' + BASE_DIR + '/etc/composer/auth.json'
   end
 end
