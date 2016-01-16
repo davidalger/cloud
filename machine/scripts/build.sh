@@ -10,6 +10,10 @@
 
 set -e
 
+if [[ ! -d $REMOTE_BASE/vendor ]]; then
+    exit
+fi
+
 # pull vendor assets into place, then cleanup
 rsync -a --ignore-existing $REMOTE_BASE/vendor/davidalger/devenv/vagrant/{etc,scripts} $VAGRANT_DIR/
 rsync -a --ignore-existing $REMOTE_BASE/vendor/davidalger/devenv/vagrant/lib/ $REMOTE_BASE/lib/
