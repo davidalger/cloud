@@ -28,37 +28,29 @@ def mage2_install node, host: nil, db_name: nil, db_host: 'localhost', db_user: 
     conf.inline = "
       set -x
       
-      composer create-project --prefer-dist -q --repository-url=https://repo.magento.com/ \
-          magento/project-enterprise-edition /var/www/magento2
+      export SITES_DIR=/var/www
+      export DB_HOST=localhost
       
-      cd /var/www/magento2
-      chmod +x bin/magento
-      bin/magento sampledata:deploy -q
-      composer update --prefer-dist -q
-      
-      mysql -e 'create database #{db_name}'
-      bin/magento setup:install -q --base-url=http://#{host} --backend-frontname=backend \
-              --admin-user=admin --admin-firstname=Admin --admin-lastname=Admin \
-              --admin-email=user@example.com --admin-password=A123456 \
-              --db-host=#{db_host} --db-user=#{db_user} #{db_pass} --db-name=#{db_name}
+      m2setup.sh -d -e --hostname=m2.demo
       
       rmdir /var/www/html
-      ln -s /var/www/magento2/pub /var/www/html
+      ln -s /var/www/m2.demo/pub /var/www/html
       
-      bin/magento deploy:mode:set production --skip-compilation -q
-      rm -rf var/di/ var/generation/
-      bin/magento setup:di:compile-multi-tenant -q
-      bin/magento setup:static-content:deploy -q
-      bin/magento cache:flush -q
+      find /var/www/m2.demo -type d -exec chmod 770 {} \;
+      find /var/www/m2.demo -type f -exec chmod 660 {} \;
       
-      chown -R apache:apache /var/www/magento2
-      chmod -R 777 /var/www/magento2
-      chmod -R g+s /var/www/magento2
+      chmod -R g+s /var/www/m2.demo
+      chown -R apache:apache /var/www/m2.demo
+      
+      chmod +x /var/www/m2.demo/bin/magento
     "
   end
 end
 
+# todo: need to fix this
 def verify_composer_auth_file
+  return true
+  
   if @composer_auth_verified
     return true
   end
