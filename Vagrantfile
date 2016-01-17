@@ -47,8 +47,8 @@ Vagrant.configure(2) do |conf|
   machine_common conf
 
   # load config declarations for each site in etc/conf.d
-  Dir.foreach BASE_DIR + '/etc/conf.d' do |file|
-    if !File.directory? file
+  Dir.foreach BASE_DIR + '/etc/conf.d' do | file |
+    if not File.directory? BASE_DIR + '/etc/conf.d/' + file and file =~ /.*\.rb/
       include_conf BASE_DIR + '/etc/conf.d/' + file, conf
     end
   end
