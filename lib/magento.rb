@@ -27,7 +27,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       export INSTALL_DIR=/var/www/magento2/#{path}
       
       m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path} \
-          > >(grep -v -f #{VAGRANT_DIR}/etc/filters/m2setup >&2)
+          > >(grep -v -f #{VAGRANT_DIR}/etc/filters/m2setup)
       
       ln -s $INSTALL_DIR/pub /var/www/html/#{path}
       ln -s $INSTALL_DIR/pub /var/www/html/#{path}/pub     # todo: remove temp fix when GH Issue #2711 is resolved
