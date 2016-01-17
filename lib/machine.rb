@@ -27,16 +27,8 @@ def machine_common (conf)
   conf.ssh.forward_agent = false
 
   # configuration on default vagrant synced folder
-  conf.vm.synced_folder '.', REMOTE_BASE, type: 'rsync', rsync__exclude: [
-    '.git/',
-    'composer.json',
-    'composer.lock',
-    'assassin.flag',
-    'README.md',
-    'config.rb',
-    'etc/conf.d/',
-    'etc/data.d/'
-  ]
+  conf.vm.synced_folder '.', REMOTE_BASE, type: 'rsync', rsync__args: ['--delete-excluded'],
+    rsync__exclude: ['/.git/', '/.gitignore', '/etc/', '/composer.*', '/*.md']
 
   # prepare node for performing actual provisioning on itself and/or other nodes
   conf.vm.provision :shell, run: 'always' do |conf|

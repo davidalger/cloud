@@ -1,6 +1,6 @@
 /.vagrant/
 /vendor/
-/etc/config.rb
+/etc/**/config.rb
 /etc/assassin.flag
 /etc/authorized_keys
 **/composer/auth.json
