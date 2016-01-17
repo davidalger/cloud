@@ -17,11 +17,17 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
     conf.inline = "
       set -e
       
+      cd #{VAGRANT_DIR}
+      source ./scripts/lib/utils.sh
+      
+      start_time=\"$(capture_nanotime)\"
+      
       export DB_HOST=localhost
       export DB_NAME=#{database}
       export INSTALL_DIR=/var/www/magento2/#{path}
       
-      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path}
+      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path} \
+          > >(grep -v -f #{VAGRANT_DIR}/etc/filters/m2setup >&2)
       
       ln -s $INSTALL_DIR/pub /var/www/html/#{path}
       ln -s $INSTALL_DIR/pub /var/www/html/#{path}/pub     # todo: remove temp fix when GH Issue #2711 is resolved
@@ -33,6 +39,8 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       chown -R apache:apache $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/bin/magento
+      
+      display_run_time
     "
   end
 end
@@ -49,6 +57,11 @@ def install_magento1 node, host: nil, path: nil, database: nil, enterprise: fals
     conf.inline = "
       set -e
       
+      cd $VAGRANT_DIR
+      source ./scripts/lib/utils.sh
+      
+      start_time=\"$(capture_nanotime)\"
+      
       export DB_HOST=localhost
       export DB_NAME=#{database}
       export INSTALL_DIR=/var/www/html/#{path}
@@ -62,6 +75,8 @@ def install_magento1 node, host: nil, path: nil, database: nil, enterprise: fals
       chown -R apache:apache $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/cron.sh
+      
+      display_run_time
     "
   end
 end
