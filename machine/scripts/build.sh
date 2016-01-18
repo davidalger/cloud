@@ -25,6 +25,6 @@ cp $REMOTE_BASE/vendor/davidalger/devenv/vagrant/bin/m2setup.sh $VAGRANT_DIR/bin
 rm -rf $REMOTE_BASE/vendor
 
 # append public key to authorized_keys file if present; this happens on provisioining in 15-ssh.sh, or here on reload
-if [[ -f /vagrant/etc/authorized_keys ]] && [[ -f ~/.ssh/id_rsa.pub ]]; then
-    cat ~/.ssh/id_rsa.pub >> /vagrant/etc/authorized_keys
+if [[ -f /vagrant/etc/ssh/authorized_keys ]] && [[ -f ~/.ssh/id_rsa.pub ]]; then
+    cat ~/.ssh/id_rsa.pub >> /vagrant/etc/ssh/authorized_keys
 fi

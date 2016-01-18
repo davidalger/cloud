@@ -3,5 +3,4 @@
 /etc/**/config.rb
 /etc/**/ssh/
 /etc/assassin.flag
-/etc/authorized_keys
 **/composer/auth.json
