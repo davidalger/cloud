@@ -16,13 +16,16 @@ conf.vm.define :cloud do |node|
   node.vm.provision :shell, run: 'always' do |conf|
     conf.name = 'place ssh keys'
     conf.inline = "
-      key_path=#{REMOTE_BASE}/etc/conf.d/cloud.etc/ssh/id_rsa
-      
-      if [[ -f $key_path ]]; then
+      if [[ -f /vagrant/etc/ssh/id_rsa ]]; then
         mkdir -p ~/.ssh
         
-        mv $key_path ~/.ssh
-        mv $key_path.pub ~/.ssh/
+        mv /vagrant/etc/ssh/id_rsa ~/.ssh/
+        mv /vagrant/etc/ssh/id_rsa.pub ~/.ssh/
+        
+        # append public key to authorized_keys file so we'll be able to talk to guests
+        if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
+          cat ~/.ssh/id_rsa.pub >> /vagrant/etc/ssh/authorized_keys
+        fi
         
         chmod 700 ~/.ssh
         chmod 600 ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
@@ -31,7 +34,10 @@ conf.vm.define :cloud do |node|
   end
   
   node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud.etc', REMOTE_BASE + '/etc', type: 'rsync'
-  node.vm.synced_folder BASE_DIR + '/etc/conf.d', REMOTE_BASE + '/etc/conf.d', type: 'rsync'
+  node.vm.synced_folder BASE_DIR + '/etc/conf.d', REMOTE_BASE + '/etc/conf.d', type: 'rsync', rsync__exclude: [
+    'cloud.etc',
+    'cloud.rb'
+  ]
   
   bootstrap_sh node, ['node', 'manager']
 end
