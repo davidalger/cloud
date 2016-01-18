@@ -12,15 +12,13 @@
 # configure rpms we need for installing current package versions
 
 set -e
-
-source ./scripts/lib/rpm.sh
-
-# note: this should also happen in node.d
-if [[ -f ./etc/yum.conf ]]; then
-    cp ./etc/yum.conf /etc/yum.conf
-fi
+wd="$(pwd)"
 
 rpm --import ./etc/keys/RPM-GPG-KEY-Vagrant.txt
+cd /var/cache/yum/rpms
 
-install_rpm https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.rpm \
-    /var/cache/yum/rpms/vagrant-1.7.4.rpm
+wget --timestamp https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.rpm 2>&1 || true
+rpm --checksig vagrant_1.7.4_x86_64.rpm
+yum install -y vagrant_1.7.4_x86_64.rpm
+
+cd "$wd"
