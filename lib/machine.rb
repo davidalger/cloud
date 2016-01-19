@@ -25,13 +25,14 @@ def machine_common (conf)
 
   # these vms are not considered secure for purposes of agent forwarding
   conf.ssh.forward_agent = false
+  conf.ssh.username = 'vagrant'
 
   # configuration on default vagrant synced folder
   conf.vm.synced_folder '.', REMOTE_BASE, type: 'rsync', rsync__args: ['--delete-excluded'],
     rsync__exclude: ['/.git/', '/.gitignore', '/etc/', '/composer.*', '/*.md']
 
   # prepare node for performing actual provisioning on itself and/or other nodes
-  conf.vm.provision :shell, run: 'always' do |conf|
+  conf.vm.provision :shell, privileged: false, run: 'always' do |conf|
     conf.name = 'build.sh'
     conf.inline = %-
       export REMOTE_BASE=#{REMOTE_BASE};

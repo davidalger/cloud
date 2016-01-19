@@ -13,7 +13,7 @@ conf.vm.define :cloud do |node|
   end
   
   # moves the persistent key/pair into place on remote node
-  node.vm.provision :shell, run: 'always' do |conf|
+  node.vm.provision :shell, privileged: false, run: 'always' do |conf|
     conf.name = 'place ssh keys'
     conf.inline = "
       if [[ -f /vagrant/etc/ssh/id_rsa ]]; then

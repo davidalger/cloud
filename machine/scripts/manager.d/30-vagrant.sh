@@ -13,6 +13,11 @@
 
 set -e
 
+# so plugins are installed in the correct user location
+export VAGRANT_HOME=/home/vagrant/.vagrant.d
+
 yum install -y vagrant
 vagrant plugin install vagrant-digitalocean
 vagrant plugin install vagrant-triggers
+
+chown -R vagrant:vagrant $VAGRANT_HOME
