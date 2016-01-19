@@ -20,7 +20,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       cd #{VAGRANT_DIR}
       source ./scripts/lib/utils.sh
       
-      start_time=\"$(capture_nanotime)\"
+      start_time=$(capture_nanotime)
       
       export DB_HOST=localhost
       export DB_NAME=#{database}
@@ -39,7 +39,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       
       chmod +x $INSTALL_DIR/bin/magento
       
-      display_run_time
+      display_run_time $start_time
     "
   end
 end
@@ -59,7 +59,7 @@ def install_magento1 node, host: nil, path: nil, database: nil, enterprise: fals
       cd $VAGRANT_DIR
       source ./scripts/lib/utils.sh
       
-      start_time=\"$(capture_nanotime)\"
+      start_time=$(capture_nanotime)
       
       export DB_HOST=localhost
       export DB_NAME=#{database}
@@ -75,7 +75,7 @@ def install_magento1 node, host: nil, path: nil, database: nil, enterprise: fals
       
       chmod +x $INSTALL_DIR/cron.sh
       
-      display_run_time
+      display_run_time $start_time
     "
   end
 end
