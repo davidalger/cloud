@@ -11,9 +11,9 @@ conf.vm.define :demo do |node|
     "
   end
   
-  install_magento2 node, host: 'demo', database: 'magento2_ce', path: 'base'
-  install_magento2 node, host: 'demo', database: 'magento2_ee', path: 'enterprise', enterprise: true
+  install_magento2 node, host: 'demo', database: 'magento2_ce', path: 'v2/base'
+  install_magento2 node, host: 'demo', database: 'magento2_ee', path: 'v2/enterprise', enterprise: true
   
-  install_magento1 node, host: 'demo', database: 'magento1_ce', path: 'base'
-  install_magento1 node, host: 'demo', database: 'magento1_ee', path: 'enterprise', enterprise: true
+  install_magento1 node, host: 'demo', database: 'magento1_ce', path: 'v1/base'
+  install_magento1 node, host: 'demo', database: 'magento1_ee', path: 'v1/enterprise', enterprise: true
 end

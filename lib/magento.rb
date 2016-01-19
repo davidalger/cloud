@@ -13,7 +13,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
   flag_sd = sampledata ? ' -d ' : nil
   
   node.vm.provision :shell do |conf|
-    conf.name = "install_magento2"
+    conf.name = "install_magento2:#{host}/#{path}"
     conf.inline = "
       set -e
       
@@ -26,10 +26,21 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       export DB_NAME=#{database}
       export INSTALL_DIR=/var/www/magento2/#{path}
       
+      echo 'Running subscript: m2setup.sh'
       m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path}
+      ln -s $INSTALL_DIR/pub $INSTALL_DIR/pub/pub     # todo: remove temp fix when GH Issue #2711 is resolved
       
-      ln -s $INSTALL_DIR/pub /var/www/html/#{path}
-      ln -s $INSTALL_DIR/pub /var/www/html/#{path}/pub     # todo: remove temp fix when GH Issue #2711 is resolved
+      echo 'Initializing software configuration'
+      
+      cd $INSTALL_DIR
+      mr2 -q config:set system/full_page_cache/caching_application 2
+      mr2 -q config:set system/full_page_cache/ttl 604800
+      mr2 -q config:set system/full_page_cache/varnish/access_list localhost
+      mr2 -q config:set system/full_page_cache/varnish/backend_host localhost
+      mr2 -q config:set system/full_page_cache/varnish/backend_port 8080
+      mr2 -q cache:flush
+      
+      echo 'Setting file permissions and ownership'
       
       find $INSTALL_DIR -type d -exec chmod 770 {} +
       find $INSTALL_DIR -type f -exec chmod 660 {} +
@@ -38,6 +49,10 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       chown -R apache:apache $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/bin/magento
+      
+      echo 'Linking public directory into webroot'
+      mkdir -p $(dirname #{path})
+      ln -s $INSTALL_DIR/pub /var/www/html/#{path}
       
       display_run_time $start_time
     "
