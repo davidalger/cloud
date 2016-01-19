@@ -6,8 +6,8 @@ conf.vm.define :demo do |node|
   node.vm.provision :shell, run: 'always' do |conf|
     conf.name = 'rsync html'
     conf.inline = "
-      rsync -a #{REMOTE_BASE}/etc/html/ /var/www/html/
-      chown -R apache:apache /var/www/html/
+      rsync -a #{REMOTE_BASE}/etc/www/ /var/www/
+      chown -R apache:apache /var/www/
     "
   end
   
