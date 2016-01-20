@@ -7,6 +7,8 @@
  # http://davidalger.com/contact/
  ##
 
+require 'utils'
+
 def machine_common (conf)
   conf.vm.box = 'bento/centos-6.7'  # overriden for some providers
 
@@ -31,14 +33,7 @@ def machine_common (conf)
     rsync__exclude: ['/.git/', '/.gitignore', '/etc/', '/composer.*', '/*.md']
 
   # prepare node for performing actual provisioning on itself and/or other nodes
-  conf.vm.provision :shell, run: 'always' do |conf|
-    conf.name = 'build.sh'
-    conf.inline = %-
-      export REMOTE_BASE=#{REMOTE_BASE};
-      export VAGRANT_DIR=#{VAGRANT_DIR};
-      #{VAGRANT_DIR}/scripts/build.sh
-    -
-  end
+  build_sh conf
 end
 
 def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
@@ -46,4 +41,30 @@ def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_vers
   
   bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
   service(node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] })
+end
+
+def build_sh (conf, env = {})
+  conf.vm.provision :shell, run: 'always' do |conf|
+    env = {
+      remote_base: REMOTE_BASE,
+      vagrant_dir: VAGRANT_DIR
+    }.merge(env)
+    exports = generate_exports env
+
+    conf.name = 'build.sh'
+    conf.inline = %-#{exports} #{VAGRANT_DIR}/scripts/build.sh-
+  end
+end
+
+def configure_sh (conf, env = {})
+  conf.vm.provision :shell, run: 'always' do |conf|
+    env = {
+      remote_base: REMOTE_BASE,
+      vagrant_dir: VAGRANT_DIR
+    }.merge(env)
+    exports = generate_exports env
+
+    conf.name = 'bootstrap.sh'
+    conf.inline = %-#{exports} #{REMOTE_BASE}/etc/configure.sh-
+  end
 end
