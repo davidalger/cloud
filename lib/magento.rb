@@ -51,7 +51,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       chmod +x $INSTALL_DIR/bin/magento
       
       echo 'Linking public directory into webroot'
-      mkdir -p $(dirname #{path})
+      mkdir -p $(dirname /var/www/html/#{path})
       ln -s $INSTALL_DIR/pub /var/www/html/#{path}
       
       display_run_time $start_time
