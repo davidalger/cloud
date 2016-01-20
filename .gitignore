@@ -16,7 +16,7 @@
 !/etc/conf.d/cloud.etc/defaults.rb
 
 /etc/conf.d/demo.etc/*
-!/etc/conf.d/demo.rb
+!/etc/conf.d/demo.rb.sample
 !/etc/conf.d/demo.etc/configure.sh
 !/etc/conf.d/demo.etc/n98-magerun.yaml.sample
 !/etc/conf.d/demo.etc/composer/
@@ -29,4 +29,4 @@
 !/etc/conf.d/demo.etc/www/html/
 
 /etc/conf.d/demo.etc/www/html/*
-!/etc/conf.d/demo.etc/www/html/index.html
+!/etc/conf.d/demo.etc/www/html/index.html.sample
