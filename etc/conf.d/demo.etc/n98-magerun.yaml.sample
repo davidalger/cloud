@@ -1,0 +1,17 @@
+commands:
+  N98\Magento\Command\Installer\InstallCommand:
+    magento-packages:
+      - name: enterprise-1.14.2.2
+        version: 1.14.2.2
+        dist:
+          url: https://example.com/enterprise-1.14.2.2.tgz
+          type: tar
+        extra:
+          sample-data: sd-enterprise-1.14.0.0
+
+    demo-data-packages:
+      - name: sd-enterprise-1.14.0.0
+        version: 1.14.0.0
+        dist:
+          url: https://example.com/sd-enterprise-1.14.0.0.zip
+          type: zip
