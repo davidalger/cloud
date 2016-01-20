@@ -59,28 +59,31 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
   end
 end
 
-def install_magento1 node, host: nil, path: nil, database: nil, enterprise: false, sampledata: true
+def install_magento1 node, host: nil, path: nil, database: nil, version_name: nil, sampledata: true
   host = host + '.' + CLOUD_DOMAIN
-  flag_ee = enterprise ? ' -e ' : nil
-  flag_sd = sampledata ? ' -d ' : nil
-  
-  return # todo: remove after implimenting m1setup.sh script
+  flag_sd = sampledata ? ' --installSampleData ' : nil
   
   node.vm.provision :shell do |conf|
-    conf.name = "install_magento1"
+    conf.name = "install_magento1:#{host}/#{path}"
     conf.inline = "
       set -e
       
-      cd $VAGRANT_DIR
+      cd #{VAGRANT_DIR}
       source ./scripts/lib/utils.sh
       
       start_time=$(capture_nanotime)
+      INSTALL_DIR=/var/www/html/#{path}
       
-      export DB_HOST=localhost
-      export DB_NAME=#{database}
-      export INSTALL_DIR=/var/www/html/#{path}
+      echo 'Running n98-magerun: install'
+      mr1 install -n -q --magentoVersionByName #{version_name} --installationFolder $INSTALL_DIR \
+          --dbHost localhost --dbUser root --dbName #{database} #{flag_sd} --baseUrl http://#{host}/#{path}
       
-      m1setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path}
+      echo 'Initializing software configuration'
+      
+      cd $INSTALL_DIR
+      ## any strictly necessary config values should be set here using mr1
+      
+      echo 'Setting file permissions and ownership'
       
       find $INSTALL_DIR -type d -exec chmod 770 {} +
       find $INSTALL_DIR -type f -exec chmod 660 {} +

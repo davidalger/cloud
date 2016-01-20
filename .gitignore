@@ -4,3 +4,4 @@
 /etc/**/ssh/
 /etc/assassin.flag
 **/composer/auth.json
+**/n98-magerun.yaml
