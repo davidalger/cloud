@@ -64,7 +64,7 @@ def configure_sh (conf, env = {})
     }.merge(env)
     exports = generate_exports env
 
-    conf.name = 'bootstrap.sh'
+    conf.name = 'configure.sh'
     conf.inline = %-#{exports} #{REMOTE_BASE}/etc/configure.sh-
   end
 end

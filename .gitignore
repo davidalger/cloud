@@ -1,7 +1,12 @@
 /.vagrant/
 /vendor/
-/etc/**/config.rb
-/etc/**/ssh/
-/etc/assassin.flag
-**/composer/auth.json
-**/n98-magerun.yaml
+/etc/
+!/etc/conf.d/cloud.etc/config.rb.sample
+!/etc/conf.d/cloud.etc/configure.sh
+!/etc/conf.d/cloud.etc/defaults.rb
+!/etc/conf.d/cloud.rb
+!/etc/conf.d/demo.etc/composer/auth.json.sample
+!/etc/conf.d/demo.etc/configure.sh
+!/etc/conf.d/demo.etc/www/html/index.html
+!/etc/conf.d/demo.rb
+!/etc/defaults.rb

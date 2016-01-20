@@ -19,5 +19,5 @@ conf.vm.define :cloud do |node|
   ]
   
   bootstrap_sh node, ['node', 'manager']
-  configure_sh node
+  configure_sh node, { cloud_config: CLOUD_CONFIG }
 end
