@@ -37,7 +37,11 @@ def machine_common (conf)
 end
 
 def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
-  node.vm.hostname = host + '.' + CLOUD_DOMAIN
+  # if no period in supplied host, tack on the configured CLOUD_DOMAIN
+  unless host =~ /.*\..*/
+    host = host + '.' + CLOUD_DOMAIN
+  end
+  node.vm.hostname = host
   
   bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
   service(node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] })
