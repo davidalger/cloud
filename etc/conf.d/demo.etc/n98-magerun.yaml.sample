@@ -5,7 +5,7 @@ commands:
         version: 1.9.2.2
         dist:
           url: https://example.com/community-1.9.2.2.tgz
-          type: tgz
+          type: tar
         extra:
           sample-data: sd-community-1.9.1.0
       - name: enterprise-1.14.2.2
