@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidalger/devenv.git",
-                "reference": "004e8a1ffac31378eba282108857468d95b17854"
+                "reference": "b3e8b041d1aa813b17174b911d5e155e6f5d1f58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidalger/devenv/zipball/004e8a1ffac31378eba282108857468d95b17854",
-                "reference": "004e8a1ffac31378eba282108857468d95b17854",
+                "url": "https://api.github.com/repos/davidalger/devenv/zipball/b3e8b041d1aa813b17174b911d5e155e6f5d1f58",
+                "reference": "b3e8b041d1aa813b17174b911d5e155e6f5d1f58",
                 "shasum": ""
             },
             "type": "library",
@@ -36,7 +36,7 @@
                 "source": "https://github.com/davidalger/devenv/tree/develop",
                 "issues": "https://github.com/davidalger/devenv/issues"
             },
-            "time": "2016-01-18 17:48:03"
+            "time": "2016-01-21 17:20:49"
         }
     ],
     "packages-dev": [],
