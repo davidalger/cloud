@@ -72,16 +72,11 @@ def install_magento1 node, host: nil, path: nil, database: nil, version_name: ni
       source ./scripts/lib/utils.sh
       
       start_time=$(capture_nanotime)
-      INSTALL_DIR=/var/www/html/#{path}
+      INSTALL_DIR=/var/www/magento1/#{path}
       
       echo 'Running n98-magerun: install'
       mr1 install -n -q --magentoVersionByName #{version_name} --installationFolder $INSTALL_DIR \
           --dbHost localhost --dbUser root --dbName #{database} #{flag_sd} --baseUrl http://#{host}/#{path}
-      
-      echo 'Initializing software configuration'
-      
-      cd $INSTALL_DIR
-      ## any strictly necessary config values should be set here using mr1
       
       echo 'Setting file permissions and ownership'
       
@@ -92,6 +87,10 @@ def install_magento1 node, host: nil, path: nil, database: nil, version_name: ni
       chown -R apache:apache $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/cron.sh
+      
+      echo 'Linking public directory into webroot'
+      mkdir -p $(dirname /var/www/html/#{path})
+      ln -s $INSTALL_DIR /var/www/html/#{path}
       
       display_run_time $start_time
     "
