@@ -14,6 +14,6 @@
     },
     "minimum-stability": "beta",
     "require": {
-        "davidalger/devenv": "dev-develop"
+        "davidalger/devenv": ">=1.0.0"
     }
 }
