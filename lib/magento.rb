@@ -82,13 +82,16 @@ def install_magento1 (node, host: nil, path: nil, database: nil, version_name: n
           --dbHost localhost --dbUser root --dbName #{database} #{flag_sd} --baseUrl http://#{host}/#{path}
       
       echo 'Initializing software configuration'
-    
+
       cd $INSTALL_DIR
       mr1 -q config:set web/secure/base_url https://#{host}/#{path}/
       mr1 -q config:set web/secure/use_in_frontend 1
       mr1 -q config:set web/secure/use_in_adminhtml 1
       mr1 -q cache:flush
       
+      echo 'Fixing sample data CMS permissions bug'
+      mr1 db:query \"INSERT INTO permission_block (block_name, is_allowed) VALUES ('cms/block', 'is_allowed')\"
+
       echo 'Setting file permissions and ownership'
       
       find $INSTALL_DIR -type d -exec chmod 770 {} +
