@@ -14,7 +14,7 @@ conf.vm.define :cloud do |node|
   
   node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud.etc', REMOTE_BASE + '/etc', type: 'rsync'
   node.vm.synced_folder BASE_DIR + '/etc/conf.d', REMOTE_BASE + '/etc/conf.d', type: 'rsync', rsync__exclude: [
-    'cloud-config'
+    'cloud-config',
     'cloud.etc',
     'cloud.rb'
   ]
