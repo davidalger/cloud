@@ -7,12 +7,12 @@
  # http://davidalger.com/contact/
  ##
 
-def include_conf(file, conf)
+def include_conf (file, conf)
   proc = Proc.new {}
   eval(File.read(file), proc.binding, file)
 end
 
-def generate_exports(env = {})
+def generate_exports (env = {})
   exports = ''
   env.each do |key, val|
     exports = %-#{exports}\nexport #{key.upcase}="#{val}";-

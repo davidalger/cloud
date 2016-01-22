@@ -44,7 +44,7 @@ def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_vers
   node.vm.hostname = host
   
   bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
-  service(node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] })
+  service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] }
 end
 
 def build_sh (conf, env = {})

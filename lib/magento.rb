@@ -7,7 +7,9 @@
  # http://davidalger.com/contact/
  ##
 
-def install_magento2 node, host: nil, path: nil, database: nil, enterprise: false, sampledata: true
+def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: false, sampledata: true,
+      admin_pass: nil, admin_user: 'admin')
+    
   host = host + '.' + CLOUD_DOMAIN
   flag_ee = enterprise ? ' -e ' : nil
   flag_sd = sampledata ? ' -d ' : nil
@@ -25,9 +27,10 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
       export DB_HOST=localhost
       export DB_NAME=#{database}
       export INSTALL_DIR=/var/www/magento2/#{path}
+      export ADMIN_PASS='#{admin_pass}'
       
       echo 'Running subscript: m2setup.sh'
-      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path}
+      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path} --admin-user=#{admin_user}
       ln -s $INSTALL_DIR/pub $INSTALL_DIR/pub/pub     # todo: remove temp fix when GH Issue #2711 is resolved
       
       echo 'Initializing software configuration'
@@ -59,7 +62,7 @@ def install_magento2 node, host: nil, path: nil, database: nil, enterprise: fals
   end
 end
 
-def install_magento1 node, host: nil, path: nil, database: nil, version_name: nil, sampledata: true
+def install_magento1 (node, host: nil, path: nil, database: nil, version_name: nil, sampledata: true)
   host = host + '.' + CLOUD_DOMAIN
   flag_sd = sampledata ? ' --installSampleData ' : nil
   
