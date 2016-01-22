@@ -10,46 +10,72 @@
 require_relative 'etc/config.rb'
 require_relative 'etc/defaults.rb'
 
+# setup environment constants
 BASE_DIR = File.dirname(__FILE__)
-VAGRANT_DIR = '/vagrant'
+REMOTE_BASE = '/vagrant'
+VAGRANT_DIR = '/vagrant/machine'  # machine dir on remote, named for compatibility with devenv
 DEVENV_PATH = 'vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
-if not File.exist?(DEVENV_PATH + '/vagrant.rb')
+# verify composer dependencies have been installed
+unless File.exist?(DEVENV_PATH + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
   raise "Please run 'composer install' before running vagrant commands."
 end
 
-$LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH)
-require 'lib/provision'
+# verify our plugin dependencies are installed
+unless Vagrant.has_plugin?("vagrant-digitalocean")
+  raise 'Error: please run `vagrant plugin install vagrant-digitalocean` and try again'
+end
+
+unless Vagrant.has_plugin?("vagrant-triggers")
+  raise 'Error: please run `vagrant plugin install vagrant-triggers` and try again'
+end
+
+# configure load path to include devenv libs and our own libs
+$LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH + '/lib')
+$LOAD_PATH.unshift(BASE_DIR + '/lib')
+
+# import our libraries
+require 'provision'
+require 'utils'
+require 'machine'
+require 'magento'
 
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
 Vagrant.configure(2) do |conf|
+  machine_common conf
 
-  conf.vm.provider 'digitalocean'
-  conf.vm.hostname = 'cloud.' + CLOUD_DOMAIN
-
-  conf.vm.provider :digital_ocean do | provider, override |
-    provider.token = CONF_DO_TOKEN
-    provider.image = CONF_DO_IMAGE
-    provider.region = CONF_DO_REGION
-    provider.size = CONF_DO_SIZE
-
-    override.ssh.private_key_path = CONF_DO_KEY_PATH
-    override.vm.box = CONF_DO_BOX_NAME
-    override.vm.box_url = CONF_DO_BOX_URL
+  # load config declarations for each site in etc/conf.d
+  Dir.foreach BASE_DIR + '/etc/conf.d' do | file |
+    if not File.directory? BASE_DIR + '/etc/conf.d/' + file and file =~ /.*\.rb$/
+      include_conf BASE_DIR + '/etc/conf.d/' + file, conf
+    end
   end
-
-  # these vms are not considered secure for purposes of agent forwarding
-  conf.ssh.forward_agent = false
-
-  # copy in devenv stuff without overwriting any existing files
-  conf.vm.provision :shell do |conf|
-    conf.name = 'build'
-    conf.inline = "rsync -a --ignore-existing #{VAGRANT_DIR}/#{DEVENV_PATH}/ #{VAGRANT_DIR}/"
+  
+  # verify with user before allowing a halt to take place
+  conf.trigger.before :halt do
+    confirm = nil
+    until ["Y", "y", "N", "n"].include?(confirm)
+      confirm = ask "Are you sure you want to halt the VM? [y/N] "
+    end
+    exit unless confirm.upcase == "Y"
   end
-
-  bootstrap_sh(conf, ['node', 'web'], { php_version: 70 })
-  service(conf, { start: ['redis', 'httpd', 'nginx'] })
-
+  
+  # verify with user before allowing a rebuild to take place
+  conf.trigger.before :rebuild do
+    confirm = nil
+    until ["Y", "y", "N", "n"].include?(confirm)
+      puts "The rebuild command is a potentially destructive operation. All data on the VM will be erased!"
+      confirm = ask "Are you sure you want to rebuild the VM? [y/N] "
+    end
+    exit unless confirm.upcase == "Y"
+  end
+  
+  # kill vagrant destroy command as a safegaurd
+  unless File.exist? BASE_DIR + '/etc/assassin.flag'
+    conf.trigger.reject :destroy do
+      puts "Sorry, that command is not allowed from the vagrant tool! Please login to console to destroy a VM"
+    end
+  end
 end

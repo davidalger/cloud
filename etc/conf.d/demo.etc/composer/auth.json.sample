@@ -1,0 +1,13 @@
+{
+  "__comment__magento_keys": "The Magento keys are read-only keys from account <account_number>.",
+  "__comment__github_oauth": "The GitHub OAuth token is a public access token and only has access to public repos.",
+    "http-basic": {
+        "repo.magento.com": {
+            "username": "<public_key>",
+            "password": "<private_key>"
+        }
+    },
+    "github-oauth": {
+        "github.com": "<public_access_token>"
+    }
+}

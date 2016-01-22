@@ -1,0 +1,50 @@
+<!doctype html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Vagrant Cloud Demo Sites</title>
+    <style type="text/css">
+      body { text-align: center; }
+      h1 { font-size: 48px; }
+      h2 { font-size: 18px; }
+      a { color: #008AFF;}
+      ul { list-style: none; padding: 0; margin: 0; }
+      ul li { margin: 0 10px; padding: 0; }
+      ul li a { display: inline-block; text-align: left; margin: 0 10px; }
+      ul li a:first-of-type { width: 120px; }
+      body { font: 14px Helvetica, sans-serif; color: #333; }
+      article { display: block; margin: 0 auto; width: 250px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Demo Sites</h1>
+    <article>
+      <ul>
+        <li>
+          <h2>Magento 2</h2>
+          <ul>
+            <li>
+              <a href="/v2/community/">Community Edition</a>
+              <a href="/v2/community/backend/">Admin</a>
+            </li>
+            <li>
+              <a href="/v2/enterprise/">Enterprise Edition</a>
+              <a href="/v2/enterprise/backend/">Admin</a>
+            </li>
+          </ul>
+        </li> 
+        <li>
+          <h2>Magento 1</h2>
+          <ul>
+            <li>
+              <a href="/v1/community/">Community Edition</a>
+              <a href="/v1/community/backend/">Admin</a>
+            </li>
+            <li>
+              <a href="/v1/enterprise/">Enterprise Edition</a>
+              <a href="/v1/enterprise/backend/">Admin</a>
+            </li>
+          </ul>
+        </li> 
+      </ul>
+    </article>
+</body>
