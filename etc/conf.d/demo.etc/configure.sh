@@ -10,7 +10,10 @@
 
 set -e
 
+rsync -a $REMOTE_BASE/etc/nginx/ /etc/nginx/
+chown -R root:root /etc/nginx/
+
 rsync -a $REMOTE_BASE/etc/www/ /var/www/
-chown -R apache:apache /var/www/
+chown -R apache:nginx /var/www/
 
 test -f $REMOTE_BASE/etc/n98-magerun.yaml && cp $REMOTE_BASE/etc/n98-magerun.yaml ~/.n98-magerun.yaml
