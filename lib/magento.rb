@@ -84,7 +84,7 @@ def install_magento1 (node, host: nil, path: nil, database: nil, version_name: n
       echo 'Initializing software configuration'
     
       cd $INSTALL_DIR
-      mr1 -q config:set web/secure/base_url https://#{host}/#{path}
+      mr1 -q config:set web/secure/base_url https://#{host}/#{path}/
       mr1 -q config:set web/secure/use_in_frontend 1
       mr1 -q config:set web/secure/use_in_adminhtml 1
       mr1 -q cache:flush
