@@ -10,27 +10,8 @@
 
 set -e
 
-# install ssh key/pair and authorized_keys on node
-if [[ -f $REMOTE_BASE/etc/ssh/id_rsa ]]; then
-  mkdir -p ~/.ssh
-  
-  mv $REMOTE_BASE/etc/ssh/id_rsa ~/.ssh/
-  mv $REMOTE_BASE/etc/ssh/id_rsa.pub ~/.ssh/
-  
-  # append public key to authorized_keys file so we'll be able to talk to guests
-  if [[ -f $REMOTE_BASE/etc/ssh/authorized_keys ]]; then
-    cat ~/.ssh/id_rsa.pub >> $REMOTE_BASE/etc/ssh/authorized_keys
-  fi
-  
-  chmod 700 ~/.ssh
-  chmod 600 ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
-fi
-
-# add github.com public key to known hosts so we can talk without user confirmation
-test ! -f ~/.ssh/known_hosts && touch ~/.ssh/known_hosts
-if [[ -z "$(grep github ~/.ssh/known_hosts)" ]]; then
-    ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-fi
+source $VAGRANT_DIR/scripts/includes/configure_ssh
+source $VAGRANT_DIR/scripts/includes/add_known_hosts
 
 # checkout specified cloud configuration from private repository (assumed to have authorized deploy key)
 if [[ ! -z $CLOUD_CONFIG ]]; then
