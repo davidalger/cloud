@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+rsync -a $REMOTE_BASE/etc/nginx/ /etc/nginx/
+chown -R root:root /etc/nginx/
