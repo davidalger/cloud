@@ -28,6 +28,7 @@ yum install -y mysql-server
 service mysqld start >> $BOOTSTRAP_LOG 2>&1
 mysql -uroot -e "
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
 "
 service mysqld stop >> $BOOTSTRAP_LOG 2>&1 # leave mysqld in stopped state
