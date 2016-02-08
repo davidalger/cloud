@@ -14,11 +14,11 @@ require_relative 'etc/defaults.rb'
 BASE_DIR = File.dirname(__FILE__)
 REMOTE_BASE = '/vagrant'
 VAGRANT_DIR = '/vagrant/machine'  # machine dir on remote, named for compatibility with devenv
-DEVENV_PATH = 'vendor/davidalger/devenv/vagrant'
+DEVENV_DIR = BASE_DIR + '/vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
 # verify composer dependencies have been installed
-unless File.exist?(DEVENV_PATH + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
+unless File.exist?(DEVENV_DIR + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
   raise "Please run 'composer install' before running vagrant commands."
 end
 
@@ -32,7 +32,7 @@ unless Vagrant.has_plugin?("vagrant-triggers")
 end
 
 # configure load path to include devenv libs and our own libs
-$LOAD_PATH.unshift(BASE_DIR + '/' + DEVENV_PATH + '/lib')
+$LOAD_PATH.unshift(DEVENV_DIR + '/lib')
 $LOAD_PATH.unshift(BASE_DIR + '/lib')
 
 # import our libraries
