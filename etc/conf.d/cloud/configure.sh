@@ -17,3 +17,5 @@ source $VAGRANT_DIR/scripts/includes/add_known_hosts
 if [[ ! -z $CLOUD_CONFIG ]]; then
     git clone -q $CLOUD_CONFIG $REMOTE_BASE/etc/sites.d
 fi
+
+echo "cd /vagrant" >> ~/.bash_profile
