@@ -13,10 +13,7 @@ set -e
 source $VAGRANT_DIR/scripts/includes/configure_ssh
 source $VAGRANT_DIR/scripts/includes/add_known_hosts
 
-# checkout specified cloud configuration from private repository (assumed to have authorized deploy key)
+# checkout specified cloud configuration from private repository (assumes authorized deploy key is present)
 if [[ ! -z $CLOUD_CONFIG ]]; then
-    git clone -q --no-checkout $CLOUD_CONFIG $REMOTE_BASE/etc/cloud-config
-    mv $REMOTE_BASE/etc/cloud-config/.git $REMOTE_BASE/etc/.git
-    rmdir $REMOTE_BASE/etc/cloud-config
-    git --work-tree $REMOTE_BASE/etc --git-dir $REMOTE_BASE/etc/.git checkout -q --force
+    git clone -q $CLOUD_CONFIG $REMOTE_BASE/etc/sites.d
 fi

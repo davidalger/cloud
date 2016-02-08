@@ -13,3 +13,7 @@
 !/etc/conf.d/cloud/config.rb.sample
 !/etc/conf.d/cloud/configure.sh
 !/etc/conf.d/cloud/defaults.rb
+!/etc/conf.d/cloud/conf.d/
+
+/etc/conf.d/cloud/conf.d/*
+!/etc/conf.d/cloud/conf.d/sites.rb

@@ -13,11 +13,6 @@ conf.vm.define :cloud do |node|
   end
   
   node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud', REMOTE_BASE + '/etc', type: 'rsync'
-  node.vm.synced_folder BASE_DIR + '/etc/conf.d', REMOTE_BASE + '/etc/conf.d', type: 'rsync', rsync__exclude: [
-    'cloud-config',
-    'cloud',
-    'cloud.rb'
-  ]
   
   bootstrap_sh node, ['node', 'manager']
   configure_sh node, { cloud_config: CLOUD_CONFIG }
