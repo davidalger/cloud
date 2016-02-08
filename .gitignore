@@ -7,7 +7,6 @@
 
 /etc/conf.d/*
 !/etc/conf.d/cloud/
-!/etc/conf.d/demo.etc/
 
 /etc/conf.d/cloud/*
 !/etc/conf.d/cloud.rb
