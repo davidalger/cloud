@@ -6,16 +6,16 @@ conf.vm.define :cloud do |node|
   
   # creates and stores a persistent key/pair on the host machine
   node.trigger.before [ :up, :provision, :reload, :rebuild ] do
-    unless File.exist? BASE_DIR + '/etc/conf.d/cloud.etc/ssh/id_rsa'
-      run "mkdir -p '#{BASE_DIR}/etc/conf.d/cloud.etc/ssh'"
-      run "ssh-keygen -N '' -t rsa -f '#{BASE_DIR}/etc/conf.d/cloud.etc/ssh/id_rsa' -C 'vagrant@#{node.vm.hostname}'"
+    unless File.exist? BASE_DIR + '/etc/conf.d/cloud/ssh/id_rsa'
+      run "mkdir -p '#{BASE_DIR}/etc/conf.d/cloud/ssh'"
+      run "ssh-keygen -N '' -t rsa -f '#{BASE_DIR}/etc/conf.d/cloud/ssh/id_rsa' -C 'vagrant@#{node.vm.hostname}'"
     end
   end
   
-  node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud.etc', REMOTE_BASE + '/etc', type: 'rsync'
+  node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud', REMOTE_BASE + '/etc', type: 'rsync'
   node.vm.synced_folder BASE_DIR + '/etc/conf.d', REMOTE_BASE + '/etc/conf.d', type: 'rsync', rsync__exclude: [
     'cloud-config',
-    'cloud.etc',
+    'cloud',
     'cloud.rb'
   ]
   

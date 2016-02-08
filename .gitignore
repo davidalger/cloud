@@ -6,11 +6,11 @@
 !/etc/conf.d/
 
 /etc/conf.d/*
-!/etc/conf.d/cloud.etc/
+!/etc/conf.d/cloud/
 !/etc/conf.d/demo.etc/
 
-/etc/conf.d/cloud.etc/*
+/etc/conf.d/cloud/*
 !/etc/conf.d/cloud.rb
-!/etc/conf.d/cloud.etc/config.rb.sample
-!/etc/conf.d/cloud.etc/configure.sh
-!/etc/conf.d/cloud.etc/defaults.rb
+!/etc/conf.d/cloud/config.rb.sample
+!/etc/conf.d/cloud/configure.sh
+!/etc/conf.d/cloud/defaults.rb
