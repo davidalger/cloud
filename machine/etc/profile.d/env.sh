@@ -24,5 +24,9 @@ export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
 # enbale color-ls emulation
 export CLICOLOR=1
 
+# Allow for easy searching of history
+bind '"\e[A":history-search-backward'
+bind '"\e[B":history-search-forward'
+
 # setup rvm if present
 [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
