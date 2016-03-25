@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ##
- # Copyright © 2015 by David Alger. All rights reserved
+ # Copyright © 2016 by David Alger. All rights reserved
  # 
  # Licensed under the Open Software License 3.0 (OSL-3.0)
  # See included LICENSE file for full text of OSL-3.0
@@ -8,21 +8,20 @@
  # http://davidalger.com/contact/
  ##
 
-########################################
-# install and configure mysqld service
-
 set -e
 
-if [[ -f ./etc/my.cnf ]]; then
-    cp ./etc/my.cnf /etc/my.cnf
-fi
+source ./scripts/lib/utils.sh
 
-mkdir /etc/my.cnf.d/    # won't exist prior to install, and 5.1 doesn't automatically create it
-if [[ -d ./etc/my.cnf.d ]] && [[ ! -z "$(ls -1 ./etc/my.cnf.d/)" ]]; then
-    cp ./etc/my.cnf.d/*.cnf /etc/my.cnf.d/
-fi
+########################################
+:: installing mysqld service
+########################################
 
+[ -f ./guest/etc/my.cnf ] && cp ./guest/etc/my.cnf /etc/my.cnf
 yum install -y mysql-server
+
+########################################
+:: configuring mysqld access
+########################################
 
 # start servcie to initialize data directory and setup default access
 service mysqld start >> $BOOTSTRAP_LOG 2>&1

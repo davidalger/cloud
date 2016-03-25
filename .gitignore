@@ -15,6 +15,10 @@
 !/etc/conf.d/cloud/configure.sh
 !/etc/conf.d/cloud/defaults.rb
 !/etc/conf.d/cloud/conf.d/
+!/etc/conf.d/cloud/keys/
 
 /etc/conf.d/cloud/conf.d/*
 !/etc/conf.d/cloud/conf.d/sites.rb
+
+/etc/conf.d/cloud/keys/*
+!/etc/conf.d/cloud/keys/RPM-GPG-KEY-Vagrant.txt

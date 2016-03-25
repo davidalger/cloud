@@ -12,8 +12,8 @@ conf.vm.define :cloud do |node|
     end
   end
   
-  node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud', REMOTE_BASE + '/etc', type: 'rsync'
+  node.vm.synced_folder BASE_DIR + '/etc/conf.d/cloud', VAGRANT_DIR + '/etc', type: 'rsync'
   
-  bootstrap_sh node, ['node', 'manager']
+  bootstrap_sh node, ['node', 'config', 'manager']
   configure_sh node, { cloud_config: CLOUD_CONFIG }
 end

@@ -29,7 +29,7 @@ def machine_common (conf)
   conf.ssh.forward_agent = false
 
   # configuration on default vagrant synced folder
-  conf.vm.synced_folder '.', REMOTE_BASE, type: 'rsync', rsync__args: ['--delete-excluded'],
+  conf.vm.synced_folder '.', VAGRANT_DIR, type: 'rsync', rsync__args: ['--delete-excluded'],
     rsync__exclude: ['/.git/', '/.gitignore', '/etc/', '/composer.*', '/*.md']
 
   # prepare node for performing actual provisioning on itself and/or other nodes
@@ -43,14 +43,17 @@ def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_vers
   end
   node.vm.hostname = host
   
-  bootstrap_sh node, ['node', 'db', 'web'], { php_version: php_version, mysql_version: mysql_version }
-  service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'] }
+  bootstrap_sh node, ['node', 'config', 'db', 'web'], {
+    ssl_dir: '/etc/ssl',
+    php_version: php_version,
+    mysql_version: mysql_version
+  }
+  service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'], reload: ['sshd'] }
 end
 
 def build_sh (conf, env = {})
   conf.vm.provision :shell, run: 'always' do |conf|
     env = {
-      remote_base: REMOTE_BASE,
       vagrant_dir: VAGRANT_DIR
     }.merge(env)
     exports = generate_exports env
@@ -63,12 +66,11 @@ end
 def configure_sh (conf, env = {})
   conf.vm.provision :shell, run: 'always' do |conf|
     env = {
-      remote_base: REMOTE_BASE,
       vagrant_dir: VAGRANT_DIR
     }.merge(env)
     exports = generate_exports env
 
     conf.name = 'configure.sh'
-    conf.inline = %-#{exports} #{REMOTE_BASE}/etc/configure.sh-
+    conf.inline = %-#{exports} #{VAGRANT_DIR}/etc/configure.sh-
   end
 end

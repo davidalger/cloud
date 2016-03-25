@@ -2,5 +2,5 @@
 
 set -e
 
-rsync -a $REMOTE_BASE/etc/nginx/ /etc/nginx/
+rsync -a $VAGRANT_DIR/etc/nginx/ /etc/nginx/
 chown -R root:root /etc/nginx/

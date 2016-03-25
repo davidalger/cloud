@@ -15,7 +15,7 @@ source $VAGRANT_DIR/scripts/includes/add_known_hosts
 
 # checkout specified cloud configuration from private repository (assumes authorized deploy key is present)
 if [[ ! -z $CLOUD_CONFIG ]]; then
-    git clone -q $CLOUD_CONFIG $REMOTE_BASE/etc/sites.d
+    git clone -q $CLOUD_CONFIG $VAGRANT_DIR/etc/sites.d
 fi
 
 echo "cd /vagrant" >> ~/.bash_profile
