@@ -9,7 +9,7 @@
 
 require 'utils'
 
-def machine_common (conf)
+def machine_common conf
   conf.vm.box = 'bento/centos-6.7'  # overriden for some providers
 
   conf.vm.provider :digital_ocean do | provider, override |
@@ -29,14 +29,15 @@ def machine_common (conf)
   conf.ssh.forward_agent = false
 
   # configuration on default vagrant synced folder
-  conf.vm.synced_folder '.', VAGRANT_DIR, type: 'rsync', rsync__args: ['--delete-excluded'],
-    rsync__exclude: ['/.git/', '/.gitignore', '/etc/', '/composer.*', '/*.md']
+  conf.vm.synced_folder '.', VAGRANT_DIR, type: 'rsync',
+    rsync__args: ['--delete-excluded', '--archive', '-z'],
+    rsync__exclude: ['/.git/', '/.gitignore', '/composer.*', '/*.md', '/etc/*.*'] # etc exclude allows dirs without a .
 
   # prepare node for performing actual provisioning on itself and/or other nodes
   build_sh conf
 end
 
-def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_version: nil)
+def machine_fullstack_vm node, host: nil, ip: nil, php_version: nil, mysql_version: nil
   # if no period in supplied host, tack on the configured CLOUD_DOMAIN
   unless host =~ /.*\..*/
     host = host + '.' + CLOUD_DOMAIN
@@ -51,7 +52,11 @@ def machine_fullstack_vm (node, host: nil, ip: nil, php_version: nil, mysql_vers
   service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'], reload: ['sshd'] }
 end
 
-def build_sh (conf, env = {})
+def machine_synced_etc node, path
+  node.vm.synced_folder path, VAGRANT_DIR + '/etc', type: 'rsync', rsync__args: [ '--archive', '-z', '--copy-links' ]
+end
+
+def build_sh conf, env = {}
   conf.vm.provision :shell, run: 'always' do |conf|
     env = {
       vagrant_dir: VAGRANT_DIR
@@ -63,7 +68,7 @@ def build_sh (conf, env = {})
   end
 end
 
-def configure_sh (conf, env = {})
+def configure_sh conf, env = {}
   conf.vm.provision :shell, run: 'always' do |conf|
     env = {
       vagrant_dir: VAGRANT_DIR
