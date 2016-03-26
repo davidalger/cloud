@@ -72,7 +72,7 @@ Vagrant.configure(2) do |conf|
   end
   
   # kill vagrant destroy command as a safegaurd
-  unless File.exist? BASE_DIR + '/etc/assassin.flag'
+  unless File.exist? BASE_DIR + '/etc/assassin.flag' or ENV['VAGRANT_ASSASSIN'] == "true"
     conf.trigger.reject :destroy do
       puts "Sorry, that command is not allowed from the vagrant tool! Please login to console to destroy a VM"
     end
