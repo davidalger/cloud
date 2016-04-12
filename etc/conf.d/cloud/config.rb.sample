@@ -1,8 +1,0 @@
-
-CLOUD_DOMAIN = 'example.com'
-CLOUD_CONFIG = 'git@github.com:<username>/cloud-config.git'
-CONF_DO_TOKEN = '<digitalocean_api_token>'
-CONF_DO_SIZE = '4gb'
-
-CONF_DO_KEY_PATH = '~/.ssh/id_rsa'
-CONF_DO_KEY_NAME = 'vagrant-cloud-digitalocean'

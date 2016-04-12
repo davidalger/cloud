@@ -28,10 +28,11 @@ def machine_common conf
   # these vms are not considered secure for purposes of agent forwarding
   conf.ssh.forward_agent = false
 
-  # configuration on default vagrant synced folder
-  conf.vm.synced_folder '.', VAGRANT_DIR, type: 'rsync',
-    rsync__args: ['--delete-excluded', '--archive', '-z'],
-    rsync__exclude: ['/.git/', '/.gitignore', '/composer.*', '/*.md', '/etc/*.*'] # etc exclude allows dirs without a .
+  # disable default vagrant dir sync and push up specific dirs we need
+  conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
+  conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
+  conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
+  conf.vm.synced_folder './vendor', "#{VAGRANT_DIR}/vendor", type: 'rsync'
 
   # prepare node for performing actual provisioning on itself and/or other nodes
   build_sh conf
