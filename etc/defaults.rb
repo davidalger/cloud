@@ -67,7 +67,7 @@ end
 #
 
 unless defined? CONF_RAX_REGION
-  CONF_RAX_REGION = :ord
+  CONF_RAX_REGION = :iad
 end
 
 unless defined? CONF_RAX_FLAVOR
