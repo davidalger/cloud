@@ -1,6 +1,6 @@
 # Environment Configuration
 CLOUD_DOMAIN = 'example.net'
-CLOUD_CONFIG = 'git@github.com:example/cloud-config.git'
+SANDBOX_SITE = true
 
 # Virtual Box Configuration
 CONF_VB_ENABLE = true
