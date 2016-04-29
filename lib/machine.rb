@@ -88,7 +88,6 @@ def machine_fullstack_vm node, host: nil, ip: nil, php_version: nil, mysql_versi
     php_version: php_version,
     mysql_version: mysql_version
   }
-  service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'], reload: ['sshd'] }
 end
 
 def machine_synced_etc node, path
