@@ -63,7 +63,7 @@ end
 #  1. Spin up a server based on the "CentOS 6 (PVHVM)" image via the Rackspace Cloud UI
 #  2. SSH into the box and run the following command:
 #     $ sed -i.bk -e 's/^\(Defaults\s\+requiretty\)/# \1/' /etc/sudoers
-#  3. Logout of the box and create an image named "CentOS 6 (PVHVM) - NoPty" via the Rackspace Cloud UI
+#  3. Logout of the box and create an image named "CentOS 6 Base Image" via the Rackspace Cloud UI
 #
 
 unless defined? CONF_RAX_REGION
@@ -75,7 +75,7 @@ unless defined? CONF_RAX_FLAVOR
 end
 
 unless defined? CONF_RAX_IMAGE
-  CONF_RAX_IMAGE = 'CentOS 6 (PVHVM) - NoPty'
+  CONF_RAX_IMAGE = 'CentOS 6 Base Image'
 end
 
 unless defined? CONF_RAX_PK_PATH
