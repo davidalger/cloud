@@ -7,6 +7,12 @@
  # http://davidalger.com/contact/
  ##
 
+def assert_plugin (plugin)
+  unless Vagrant.has_plugin?(plugin)
+    raise "Error: please run `vagrant plugin install #{plugin}` and try again"
+  end
+end
+
 def include_conf (file, conf)
   proc = Proc.new {}
   eval(File.read(file), proc.binding, file)

@@ -2,5 +2,6 @@
 /vendor/
 
 /etc/*
+!/etc/config.rb.example
 !/etc/defaults.rb
 !/etc/conf.d/
