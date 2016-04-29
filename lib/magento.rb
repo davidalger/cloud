@@ -16,6 +16,12 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
   
   node.vm.provision :shell do |conf|
     conf.name = "install_magento2:#{host}/#{path}"
+    
+    opt_urlpath = ''
+    if path
+      opt_urlpath = "--urlpath=#{path}"
+    end
+    
     conf.inline = "
       set -e
       
@@ -30,7 +36,7 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
       export ADMIN_PASS='#{admin_pass}'
       
       echo 'Running subscript: m2setup.sh'
-      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} --urlpath=#{path} --admin-user=#{admin_user}
+      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} #{opt_urlpath} --admin-user=#{admin_user}
       ln -s $INSTALL_DIR/pub $INSTALL_DIR/pub/pub     # todo: remove temp fix when GH Issue #2711 is resolved
       
       echo 'Initializing software configuration'
