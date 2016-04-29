@@ -77,3 +77,11 @@ end
 unless defined? CONF_RAX_IMAGE
   CONF_RAX_IMAGE = 'CentOS 6 (PVHVM) - NoPty'
 end
+
+unless defined? CONF_RAX_PK_PATH
+  CONF_RAX_PK_PATH = '~/.ssh/id_rsa'
+end
+
+unless defined? CONF_RAX_PK_PUB_PATH
+  CONF_RAX_PK_PUB_PATH = '~/.ssh/id_rsa.pub'
+end
