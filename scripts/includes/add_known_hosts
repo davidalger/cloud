@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -e
+
+# add github.com public key to known hosts so we can talk without user confirmation
+test ! -f ~/.ssh/known_hosts && touch ~/.ssh/known_hosts
+if [[ -z "$(grep github ~/.ssh/known_hosts)" ]]; then
+    ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+fi

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+# install ssh key/pair and authorized_keys on node
+if [[ -f $VAGRANT_DIR/etc/ssh/id_rsa ]]; then
+  mkdir -p ~/.ssh
+  
+  mv $VAGRANT_DIR/etc/ssh/id_rsa ~/.ssh/
+  mv $VAGRANT_DIR/etc/ssh/id_rsa.pub ~/.ssh/
+  
+  # append public key to authorized_keys file so we'll be able to talk to guests
+  if [[ -f $VAGRANT_DIR/etc/ssh/authorized_keys ]]; then
+    cat ~/.ssh/id_rsa.pub >> $VAGRANT_DIR/etc/ssh/authorized_keys
+  fi
+  
+  chmod 700 ~/.ssh
+  chmod 600 ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
+fi
