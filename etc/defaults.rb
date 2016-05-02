@@ -17,12 +17,12 @@ end
 ########################################
 # Digital Ocean Configuration
 
-unless defined? CONF_DO_KEY_PATH
-  CONF_DO_KEY_PATH = '~/.ssh/id_rsa'
+unless defined? CONF_DO_PK_PATH
+  CONF_DO_PK_PATH = '~/.ssh/id_rsa'
 end
 
 unless defined? CONF_DO_KEY_NAME
-  CONF_DO_KEY_NAME = 'VagrantCloud'
+  CONF_DO_PK_NAME = 'VagrantCloud'
 end
 
 unless defined? CONF_DO_IMAGE
