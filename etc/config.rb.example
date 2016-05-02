@@ -1,0 +1,23 @@
+# Environment Configuration
+CLOUD_DOMAIN = 'example.net'
+SANDBOX_SITE = true
+
+# Virtual Box Configuration
+CONF_VB_ENABLE = true
+
+# Digital Ocean Configuration
+# CONF_DO_TOKEN = '<digital-ocean-api-token>'
+
+########################################
+# AWS Configuration
+
+# CONF_AWS_ENABLE = true
+# CONF_AWS_KEY_ID = '<aws-key-id>'
+# CONF_AWS_KEY_SECRET = '<aws-key-secret>'
+# CONF_AWS_SESSION_TOKEN = '<aws-session-token>'
+
+########################################
+# Rackspace Cloud Configuration
+
+# CONF_RAX_USERNAME = '<rax-username>'
+# CONF_RAX_API_KEY = '<rax-api-key>'

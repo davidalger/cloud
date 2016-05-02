@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a7cd46b53d44652c7761bb0cb9e634f5",
-    "content-hash": "196c382b610cd7cf55e9993eead08a79",
+    "hash": "f0d11868ce846ffc4922e5fd4d14016e",
+    "content-hash": "8422817ebfdaaf41dd0b1cf8fc011edc",
     "packages": [
         {
             "name": "davidalger/devenv",
-            "version": "dev-develop",
+            "version": "1.0.0-beta22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/davidalger/devenv.git",
-                "reference": "68adfdd602125dad78004b3f773550bebc83bf94"
+                "reference": "312a1439d483e7c6711b0ff26df04538a17857c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/davidalger/devenv/zipball/68adfdd602125dad78004b3f773550bebc83bf94",
-                "reference": "68adfdd602125dad78004b3f773550bebc83bf94",
+                "url": "https://api.github.com/repos/davidalger/devenv/zipball/312a1439d483e7c6711b0ff26df04538a17857c4",
+                "reference": "312a1439d483e7c6711b0ff26df04538a17857c4",
                 "shasum": ""
             },
             "type": "library",
@@ -33,18 +33,16 @@
             ],
             "description": "Vagrant Development Environment for Mac OS X Hosts",
             "support": {
-                "source": "https://github.com/davidalger/devenv/tree/develop",
+                "source": "https://github.com/davidalger/devenv/tree/1.0.0-beta22",
                 "issues": "https://github.com/davidalger/devenv/issues"
             },
-            "time": "2016-03-26 17:12:27"
+            "time": "2016-04-27 22:38:27"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "beta",
-    "stability-flags": {
-        "davidalger/devenv": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

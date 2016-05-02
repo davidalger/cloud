@@ -4,3 +4,5 @@ set -e
 
 rsync -a $VAGRANT_DIR/etc/nginx/ /etc/nginx/
 chown -R root:root /etc/nginx/
+
+service nginx reload

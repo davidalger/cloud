@@ -21,15 +21,6 @@ unless File.exist?(DEVENV_DIR + '/vagrant.rb') or not File.exist?(BASE_DIR + '/c
   raise "Please run 'composer install' before running vagrant commands."
 end
 
-# verify our plugin dependencies are installed
-unless Vagrant.has_plugin?("vagrant-digitalocean")
-  raise 'Error: please run `vagrant plugin install vagrant-digitalocean` and try again'
-end
-
-unless Vagrant.has_plugin?("vagrant-triggers")
-  raise 'Error: please run `vagrant plugin install vagrant-triggers` and try again'
-end
-
 # configure load path to include devenv libs and our own libs
 $LOAD_PATH.unshift(DEVENV_DIR + '/lib')
 $LOAD_PATH.unshift(BASE_DIR + '/lib')
@@ -40,10 +31,26 @@ require 'utils'
 require 'machine'
 require 'magento'
 
+# verify our plugin dependencies are installed
+assert_plugin 'vagrant-triggers'
+
 # begin the configuration sequence
 Vagrant.require_version '>= 1.7.4'
 Vagrant.configure(2) do |conf|
-  machine_common conf
+
+  provider_vb conf
+  provider_do conf
+  provider_aws conf
+  provider_rack conf
+
+  # disable default vagrant dir sync and push up specific dirs we need
+  conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
+  conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
+  conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
+  conf.vm.synced_folder './vendor', "#{VAGRANT_DIR}/vendor", type: 'rsync'
+
+  # prepare machine for provisioning
+  build_sh conf
 
   # load config declarations for each site in etc/conf.d
   Dir.foreach BASE_DIR + '/etc/conf.d' do | file |

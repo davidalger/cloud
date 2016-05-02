@@ -9,33 +9,73 @@
 
 require 'utils'
 
-def machine_common conf
-  conf.vm.box = 'bento/centos-6.7'  # overriden for some providers
+# Virtual Box Configuration
+def provider_vb conf
+  if defined? CONF_VB_ENABLE and CONF_VB_ENABLE == true
+    conf.vm.provider :virtualbox do |provider, conf|
+      provider.memory = 4096
+      provider.cpus = 2
 
-  conf.vm.provider :digital_ocean do | provider, override |
-    provider.token = CONF_DO_TOKEN
-    provider.image = CONF_DO_IMAGE
-    provider.region = CONF_DO_REGION
-    provider.size = CONF_DO_SIZE
-    provider.ssh_key_name = CONF_DO_KEY_NAME
-    provider.backups_enabled = true
-
-    override.ssh.private_key_path = CONF_DO_KEY_PATH
-    override.vm.box = CONF_DO_BOX_NAME
-    override.vm.box_url = CONF_DO_BOX_URL
+      conf.vm.network :private_network, type: 'dhcp'
+      conf.vm.box = 'bento/centos-6.7'
+    end
   end
+end
 
-  # these vms are not considered secure for purposes of agent forwarding
-  conf.ssh.forward_agent = false
+# Digital Ocean Configuration
+def provider_do conf
+  if defined? CONF_DO_TOKEN
+    assert_plugin 'vagrant-digitalocean'
+    
+    conf.vm.provider :digital_ocean do |provider, conf|
+      provider.token           = CONF_DO_TOKEN
+      provider.image           = CONF_DO_IMAGE
+      provider.region          = CONF_DO_REGION
+      provider.size            = CONF_DO_SIZE
+      provider.ssh_key_name    = CONF_DO_PK_NAME
+      provider.backups_enabled = true
 
-  # disable default vagrant dir sync and push up specific dirs we need
-  conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
-  conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
-  conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
-  conf.vm.synced_folder './vendor', "#{VAGRANT_DIR}/vendor", type: 'rsync'
+      conf.ssh.private_key_path = CONF_DO_PK_PATH
+      conf.vm.box = 'https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box'
+    end
+  end
+end
 
-  # prepare node for performing actual provisioning on itself and/or other nodes
-  build_sh conf
+# AWS Configuration
+def provider_aws conf
+  if defined? CONF_AWS_KEY_ID and defined? CONF_AWS_KEY_SECRET
+    assert_plugin 'vagrant-aws'
+    conf.vm.provider :aws do |provider, conf|
+      provider.ami               = CONF_AWS_AMI
+      provider.access_key_id     = CONF_AWS_KEY_ID
+      provider.secret_access_key = CONF_AWS_KEY_SECRET
+      provider.keypair_name      = CONF_AWS_PK_NAME
+
+      if defined? CONF_AWS_SESSION_TOKEN
+        provider.session_token = CONF_AWS_SESSION_TOKEN
+      end
+
+      conf.ssh.username          = 'cloud'
+      conf.ssh.private_key_path  = CONF_AWS_PK_PATH
+      conf.vm.box = 'https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box'
+    end
+  end
+end
+
+# Rackspace Cloud Configuration
+def provider_rack conf
+  if defined? CONF_RAX_USERNAME and defined? CONF_RAX_API_KEY
+    assert_plugin 'vagrant-rackspace'
+    conf.vm.provider :rackspace do |provider, conf|
+      provider.username         = CONF_RAX_USERNAME
+      provider.api_key          = CONF_RAX_API_KEY
+      provider.rackspace_region = CONF_RAX_REGION
+      provider.flavor           = CONF_RAX_FLAVOR
+      provider.image            = CONF_RAX_IMAGE
+      provider.public_key_path  = CONF_RAX_PK_PUB_PATH
+      conf.ssh.private_key_path = CONF_RAX_PK_PATH
+    end
+  end
 end
 
 def machine_fullstack_vm node, host: nil, ip: nil, php_version: nil, mysql_version: nil
@@ -50,7 +90,6 @@ def machine_fullstack_vm node, host: nil, ip: nil, php_version: nil, mysql_versi
     php_version: php_version,
     mysql_version: mysql_version
   }
-  service node, { start: ['redis', 'mysqld', 'httpd', 'varnish', 'nginx'], reload: ['sshd'] }
 end
 
 def machine_synced_etc node, path
