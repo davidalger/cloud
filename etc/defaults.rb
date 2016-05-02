@@ -21,7 +21,7 @@ unless defined? CONF_DO_PK_PATH
   CONF_DO_PK_PATH = '~/.ssh/id_rsa'
 end
 
-unless defined? CONF_DO_KEY_NAME
+unless defined? CONF_DO_PK_NAME
   CONF_DO_PK_NAME = 'VagrantCloud'
 end
 
