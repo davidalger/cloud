@@ -19,14 +19,16 @@ source ./scripts/lib/utils.sh
 [ -f ./guest/etc/my.cnf ] && cp ./guest/etc/my.cnf /etc/my.cnf
 yum install -y mysql-server
 
+chkconfig mysqld on
+
+# start servcie to initialize data directory and then stop for remount
+service mysqld start 2>&1   # quiet chatty data dir init output
+
 ########################################
 :: configuring mysqld access
 ########################################
 
-# start servcie to initialize data directory and setup default access
-service mysqld start >> $BOOTSTRAP_LOG 2>&1
 mysql -uroot -e "
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
     FLUSH PRIVILEGES;
 "
-service mysqld stop >> $BOOTSTRAP_LOG 2>&1 # leave mysqld in stopped state
