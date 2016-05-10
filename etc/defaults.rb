@@ -34,7 +34,7 @@ unless defined? CONF_DO_REGION
 end
 
 unless defined? CONF_DO_SIZE
-  CONF_DO_SIZE = '2gb'
+  CONF_DO_SIZE = '4gb'
 end
 
 unless defined? CONF_DO_BOX_NAME
