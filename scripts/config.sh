@@ -26,3 +26,6 @@ if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
     cp /vagrant/etc/ssh/authorized_keys ~/.ssh/authorized_keys
     chmod 600 ~/.ssh/authorized_keys
 fi
+
+# reload ssh daemon since we have a custom config it needs to load
+service sshd reload
