@@ -36,6 +36,7 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
       echo 'Initializing software configuration'
       
       cd $INSTALL_DIR
+      mr2 -q setup:config:set --no-interaction --http-cache-hosts=127.0.0.1:6081
       mr2 -q config:set system/full_page_cache/caching_application 2
       mr2 -q config:set system/full_page_cache/ttl 604800
       mr2 -q config:set system/full_page_cache/varnish/access_list localhost
