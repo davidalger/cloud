@@ -6,6 +6,8 @@ import std;
 backend default {
     .host = "localhost";
     .port = "8080";
+    .first_byte_timeout = 3600s;
+    .between_bytes_timeout = 300s;
 }
 
 acl purge {
@@ -17,10 +19,15 @@ sub vcl_recv {
         if (client.ip !~ purge) {
             return (synth(405, "Method not allowed"));
         }
-        if (!req.http.X-Magento-Tags-Pattern) {
-            return (synth(400, "X-Magento-Tags-Pattern header required"));
+        if (!req.http.X-Magento-Tags-Pattern && !req.http.X-Pool) {
+            return (synth(400, "X-Magento-Tags-Pattern or X-Pool header required"));
         }
-        ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
+        if (req.http.X-Magento-Tags-Pattern) {
+          ban("obj.http.X-Magento-Tags ~ " + req.http.X-Magento-Tags-Pattern);
+        }
+        if (req.http.X-Pool) {
+          ban("obj.http.X-Pool ~ " + req.http.X-Pool);
+        }
         return (synth(200, "Purged"));
     }
  
@@ -52,7 +59,7 @@ sub vcl_recv {
     std.collect(req.http.Cookie);
 
     # static files are always cacheable. remove SSL flag and cookie
-        if (req.url ~ "^/(pub/)?(media|static)/.*\.(ico|css|js|jpg|jpeg|png|gif|tiff|bmp|mp3|ogg|svg|swf|woff|woff2|eot|ttf|otf)$") {
+    if (req.url ~ "^/(pub/)?(media|static)/.*\.(ico|css|js|jpg|jpeg|png|gif|tiff|bmp|mp3|ogg|svg|swf|woff|woff2|eot|ttf|otf)$") {
         unset req.http.Https;
         unset req.http.Cookie;
     }
@@ -64,7 +71,11 @@ sub vcl_hash {
     if (req.http.cookie ~ "X-Magento-Vary=") {
         hash_data(regsub(req.http.cookie, "^.*?X-Magento-Vary=([^;]+);*.*$", "\1"));
     }
-    
+
+    # prevents https / http cross-over in cache resulting in secure pages uanble to load static assets
+    if (req.http.X-Forwarded-Proto) {
+        hash_data(req.http.X-Forwarded-Proto);
+    }
 }
 
 sub vcl_backend_response {

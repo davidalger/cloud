@@ -16,11 +16,11 @@ source ./scripts/lib/utils.sh
 :: installing web services
 ########################################
 
-yum install -y redis sendmail varnish httpd nginx
+yum install -y redis sendmail varnish nginx
 
 # install php and cross-version dependencies
-yum $extra_repos install -y php php-cli php-curl php-gd php-intl php-mcrypt php-xsl php-mbstring php-soap php-bcmath \
-    php-mysqlnd php-mhash php-opcache php-ldap
+yum $extra_repos install -y php-fpm php-cli php-opcache \
+    php-mysqlnd php-mhash php-curl php-gd php-intl php-mcrypt php-xsl php-mbstring php-soap php-bcmath php-zip
 
 # phpredis does not yet have php7 support
 [[ "$PHP_VERSION" < 70 ]] && yum $extra_repos install -y php-pecl-redis
@@ -29,24 +29,28 @@ yum $extra_repos install -y php php-cli php-curl php-gd php-intl php-mcrypt php-
 :: configuring web services
 ########################################
 
-perl -pi -e 's/Listen 80//' /etc/httpd/conf/httpd.conf
-perl -0777 -pi -e 's#(<Directory "/var/www/html">.*?)AllowOverride None(.*?</Directory>)#$1AllowOverride All$2#s' \
-        /etc/httpd/conf/httpd.conf
+adduser --system --user-group --no-create-home www-data
+usermod -a -G www-data nginx
 
-# disable error index file if installed
-[ -f "/var/www/error/noindex.html" ] && mv /var/www/error/noindex.html /var/www/error/noindex.html.disabled
+chown -R root /var/log/php-fpm      # ditch apache ownership
+chgrp -R www-data /var/lib/php      # ditch apache group
+
+userdel apache
+
+perl -pi -e 's/^user = apache/user = www-data/' /etc/php-fpm.d/www.conf
+perl -pi -e 's/^group = apache/group = www-data/' /etc/php-fpm.d/www.conf
 
 chkconfig redis on
 service redis start
-
-chkconfig httpd on
-service httpd start
 
 chkconfig varnish on
 service varnish start
 
 chkconfig nginx on
 service nginx start
+
+chkconfig php-fpm on
+service php-fpm start
 
 ########################################
 :: installing develop tools
