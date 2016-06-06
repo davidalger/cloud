@@ -13,15 +13,12 @@ set -e
 source ./scripts/lib/utils.sh
 
 ########################################
-:: configuring guest machine provider
+:: running generic guest configuration
 ########################################
 
-# configure VM Ware tools to automatically rebuild missing VMX kernel modules upon boot
-# see: https://github.com/mitchellh/vagrant/issues/4362#issuecomment-52589577
-#
-if [[ -f /etc/vmware-tools/locations ]]; then
-    sed -i -re 's/^answer (AUTO_KMODS_ENABLED|AUTO_KMODS_ENABLED_ANSWER) no$/answer \1 yes/' /etc/vmware-tools/locations
-fi
+# set dns record in hosts file
+ip_address=$(ifconfig eth0 | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}')
+printf "\n$ip_address $(hostname)\n" >> /etc/hosts
 
 ########################################
 :: configuring rpms needed for install

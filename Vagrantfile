@@ -13,16 +13,9 @@ require_relative 'etc/defaults.rb'
 # setup environment constants
 BASE_DIR = File.dirname(__FILE__)
 VAGRANT_DIR = '/vagrant'
-DEVENV_DIR = BASE_DIR + '/vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
-# verify composer dependencies have been installed
-unless File.exist?(DEVENV_DIR + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
-  raise "Please run 'composer install' before running vagrant commands."
-end
-
 # configure load path to include devenv libs and our own libs
-$LOAD_PATH.unshift(DEVENV_DIR + '/lib')
 $LOAD_PATH.unshift(BASE_DIR + '/lib')
 
 # import our libraries
@@ -47,6 +40,8 @@ Vagrant.configure(2) do |conf|
   conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
   conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
   conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
+  conf.vm.synced_folder './etc/keys', "#{VAGRANT_DIR}/etc/keys", type: 'rsync'
+  conf.vm.synced_folder './etc/filters', "#{VAGRANT_DIR}/etc/filters", type: 'rsync'
 
   # load config declarations for each site in etc/conf.d
   Dir.foreach BASE_DIR + '/etc/conf.d' do | file |
