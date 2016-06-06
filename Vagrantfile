@@ -47,10 +47,6 @@ Vagrant.configure(2) do |conf|
   conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
   conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
   conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
-  conf.vm.synced_folder './vendor', "#{VAGRANT_DIR}/vendor", type: 'rsync'
-
-  # prepare machine for provisioning
-  build_sh conf
 
   # load config declarations for each site in etc/conf.d
   Dir.foreach BASE_DIR + '/etc/conf.d' do | file |
