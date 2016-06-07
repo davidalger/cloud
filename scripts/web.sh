@@ -54,6 +54,7 @@ userdel apache
 chown -R root /var/log/php-fpm      # ditch apache ownership
 chgrp -R www-data /var/lib/php      # ditch apache group
 
+mkdir -p /var/www/html
 chown www-data:www-data /var/www/html
 
 # ensure each of the web services will start on boot
