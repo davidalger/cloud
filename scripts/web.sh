@@ -31,8 +31,13 @@ yum $extra_repos install -y php-fpm php-cli php-opcache \
 
 adduser -rUm -G sshusers www-data
 
+# start user in the web root when logging in
+echo cd /var/www/html >> ~www-data/.bash_profile
+
+# create a key-pair to be used as a deploy key as needed
 [[ ! -f ~www-data/.ssh/id_rsa ]] && sudo -u www-data ssh-keygen -N '' -t rsa -f ~www-data/.ssh/id_rsa
 
+# authorize public keys on www-data user as well, using either provided authorized_keys file or vagrant supplied key
 if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
     cp /vagrant/etc/ssh/authorized_keys ~www-data/.ssh/authorized_keys
 else
@@ -42,16 +47,16 @@ fi
 chown www-data:www-data ~www-data/.ssh/authorized_keys
 chmod 600 ~www-data/.ssh/authorized_keys
 
+# configure proper group membership and ownership (apache user comes in with the php-fpm rpm)
 usermod -a -G www-data nginx
+userdel apache
 
 chown -R root /var/log/php-fpm      # ditch apache ownership
 chgrp -R www-data /var/lib/php      # ditch apache group
 
-userdel apache
+chown www-data:www-data /var/www/html
 
-perl -pi -e 's/^user = apache/user = www-data/' /etc/php-fpm.d/www.conf
-perl -pi -e 's/^group = apache/group = www-data/' /etc/php-fpm.d/www.conf
-
+# ensure each of the web services will start on boot
 chkconfig redis on
 service redis start
 
