@@ -1,5 +1,16 @@
 # Vagrant Cloud
 
+-- unreleased --
+==========
+
+* Changed web stack to nginx -> varnish -> nginx -> php-fpm setup.
+* Added www-data web user for php-fpm service general SSH access.
+* Updated SSH configuration to better secure provisioned servers.
+    * Access requires user be a member of sshusers group.
+    * Access requires use of public-key authentication.
+* Removed all dependencies on the DevEnv GitHub project for a simpler provisioning process.
+* Added 2nd sandbox node for dev purposes.
+
 0.2.1
 ==========
 
