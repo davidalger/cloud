@@ -29,7 +29,19 @@ yum $extra_repos install -y php-fpm php-cli php-opcache \
 :: configuring web services
 ########################################
 
-adduser --system --user-group --no-create-home www-data
+adduser -rUm -G sshusers www-data
+
+[[ ! -f ~www-data/.ssh/id_rsa ]] && sudo -u www-data ssh-keygen -N '' -t rsa -f ~www-data/.ssh/id_rsa
+
+if [[ -f /vagrant/etc/ssh/authorized_keys ]]; then
+    cp /vagrant/etc/ssh/authorized_keys ~www-data/.ssh/authorized_keys
+else
+    cp ~/.ssh/authorized_keys ~www-data/.ssh/authorized_keys
+fi
+
+chown www-data:www-data ~www-data/.ssh/authorized_keys
+chmod 600 ~www-data/.ssh/authorized_keys
+
 usermod -a -G www-data nginx
 
 chown -R root /var/log/php-fpm      # ditch apache ownership
