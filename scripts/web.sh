@@ -54,9 +54,14 @@ userdel apache
 chown -R root /var/log/php-fpm      # ditch apache ownership
 chgrp -R www-data /var/lib/php      # ditch apache group
 
+# setup a phpinfo file in webroot for review purposes post-provisioning
 mkdir -p /var/www/html/current/pub
 echo '<?php phpinfo();' > /var/www/html/current/pub/index.php
 chown -R www-data:www-data /var/www/html
+
+# create dir where dhparam.pem and ssl cert files are stored
+mkdir /etc/nginx/ssl
+chmod 600 /etc/nginx/ssl
 
 # ensure each of the web services will start on boot
 chkconfig redis on
@@ -70,6 +75,18 @@ service nginx start
 
 chkconfig php-fpm on
 service php-fpm start
+
+########################################
+:: setting up lets encrypt
+########################################
+
+git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt
+
+mkdir /var/www/html/letsencrypt
+chmod g+s /var/www/html/letsencrypt
+chgrp nginx /var/www/html/letsencrypt
+
+/opt/letsencrypt/certbot-auto --non-interactive plugins     # installs all deps and prints available plugin info
 
 ########################################
 :: installing develop tools

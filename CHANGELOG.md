@@ -11,6 +11,8 @@
     * Access requires use of public-key authentication.
 * Removed all dependencies on the DevEnv GitHub project for a simpler provisioning process.
 * Added 2nd sandbox node for dev purposes.
+* Removed add_knonw_hosts include script (any nodes using this will need configure.sh updated).
+* Added letsencrypt ssl setup so certbot is ready and available to use generating ssl certs.
 
 0.2.1
 ==========

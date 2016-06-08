@@ -115,3 +115,12 @@ rsync -av --ignore-existing ./guest/bin/ /usr/local/bin/
 
 rsync -av ./guest/etc/ /etc/
 git config --global core.excludesfile /etc/.gitignore_global
+
+########################################
+:: key scanning for known hosts
+########################################
+
+# add github.com key so non-interactive clones will work later in provisioning
+if [[ ! -f ~/.ssh/known_hosts ]] || [[ -z "$(grep github ~/.ssh/known_hosts)" ]]; then
+    ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+fi
