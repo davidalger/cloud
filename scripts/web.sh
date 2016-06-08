@@ -54,8 +54,9 @@ userdel apache
 chown -R root /var/log/php-fpm      # ditch apache ownership
 chgrp -R www-data /var/lib/php      # ditch apache group
 
-mkdir -p /var/www/html
-chown www-data:www-data /var/www/html
+mkdir -p /var/www/html/current/pub
+echo '<?php phpinfo();' > /var/www/html/current/pub/index.php
+chown -R www-data:www-data /var/www/html
 
 # ensure each of the web services will start on boot
 chkconfig redis on
