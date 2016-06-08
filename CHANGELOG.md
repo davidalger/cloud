@@ -4,6 +4,7 @@
 ==========
 
 * Changed web stack to nginx -> varnish -> nginx -> php-fpm setup.
+* Changed default version of PHP to PHP 7.0 (formerly PHP 5.6).
 * Added www-data web user for php-fpm service general SSH access.
 * Updated SSH configuration to better secure provisioned servers.
     * Access requires user be a member of sshusers group.

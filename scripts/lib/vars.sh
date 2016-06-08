@@ -13,8 +13,8 @@ set -e
 # determine which version of php we are installing and determine which extra RPMs are needed
 case "$PHP_VERSION" in
     
-    "" ) # set default of PHP 5.6 if none was specified
-        PHP_VERSION="56"
+    "" ) # set default of PHP 7.0 if none was specified
+        PHP_VERSION="70"
         ;&  ## fallthrough to below case, we know it matches
     55 | 56 | 70 )
         extra_repos="--enablerepo=remi --enablerepo=remi-php${PHP_VERSION}"
