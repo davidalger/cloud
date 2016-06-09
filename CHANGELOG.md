@@ -1,5 +1,10 @@
 # Vagrant Cloud
 
+1.0.1
+==========
+
+* Fixed bug preventing composer from using a cache inside www-data shell user
+
 1.0.0
 ==========
 
