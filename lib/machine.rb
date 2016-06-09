@@ -96,18 +96,6 @@ def machine_synced_etc node, path
   node.vm.synced_folder path, VAGRANT_DIR + '/etc', type: 'rsync', rsync__args: [ '--archive', '-z', '--copy-links' ]
 end
 
-def build_sh conf, env = {}
-  conf.vm.provision :shell, run: 'always' do |conf|
-    env = {
-      vagrant_dir: VAGRANT_DIR
-    }.merge(env)
-    exports = generate_exports env
-
-    conf.name = 'build.sh'
-    conf.inline = %-#{exports} #{VAGRANT_DIR}/scripts/build.sh-
-  end
-end
-
 def configure_sh conf, env = {}
   conf.vm.provision :shell, run: 'always' do |conf|
     env = {

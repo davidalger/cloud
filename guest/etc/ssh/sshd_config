@@ -6,6 +6,7 @@ SyslogFacility AUTHPRIV
 RSAAuthentication yes
 PubkeyAuthentication yes
 PasswordAuthentication no
+AllowGroups sshusers
 ChallengeResponseAuthentication no
 UsePAM yes
 

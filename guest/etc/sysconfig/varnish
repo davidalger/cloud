@@ -58,7 +58,9 @@ VARNISH_TTL=120
 DAEMON_OPTS="-a ${VARNISH_LISTEN_ADDRESS}:${VARNISH_LISTEN_PORT} \
              -f ${VARNISH_VCL_CONF} \
              -T ${VARNISH_ADMIN_LISTEN_ADDRESS}:${VARNISH_ADMIN_LISTEN_PORT} \
+             -t ${VARNISH_TTL} \
              -p thread_pool_min=${VARNISH_MIN_THREADS} \
              -p thread_pool_max=${VARNISH_MAX_THREADS} \
              -S ${VARNISH_SECRET_FILE} \
-             -s ${VARNISH_STORAGE}"
+             -s ${VARNISH_STORAGE} \
+             -p cli_buffer=16384"

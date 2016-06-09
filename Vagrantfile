@@ -13,16 +13,9 @@ require_relative 'etc/defaults.rb'
 # setup environment constants
 BASE_DIR = File.dirname(__FILE__)
 VAGRANT_DIR = '/vagrant'
-DEVENV_DIR = BASE_DIR + '/vendor/davidalger/devenv/vagrant'
 SHARED_DIR = BASE_DIR + '/.shared'
 
-# verify composer dependencies have been installed
-unless File.exist?(DEVENV_DIR + '/vagrant.rb') or not File.exist?(BASE_DIR + '/composer.json')
-  raise "Please run 'composer install' before running vagrant commands."
-end
-
 # configure load path to include devenv libs and our own libs
-$LOAD_PATH.unshift(DEVENV_DIR + '/lib')
 $LOAD_PATH.unshift(BASE_DIR + '/lib')
 
 # import our libraries
@@ -47,10 +40,8 @@ Vagrant.configure(2) do |conf|
   conf.vm.synced_folder '.', VAGRANT_DIR, disabled: true
   conf.vm.synced_folder './guest', "#{VAGRANT_DIR}/guest", type: 'rsync'
   conf.vm.synced_folder './scripts', "#{VAGRANT_DIR}/scripts", type: 'rsync'
-  conf.vm.synced_folder './vendor', "#{VAGRANT_DIR}/vendor", type: 'rsync'
-
-  # prepare machine for provisioning
-  build_sh conf
+  conf.vm.synced_folder './etc/keys', "#{VAGRANT_DIR}/etc/keys", type: 'rsync'
+  conf.vm.synced_folder './etc/filters', "#{VAGRANT_DIR}/etc/filters", type: 'rsync'
 
   # load config declarations for each site in etc/conf.d
   Dir.foreach BASE_DIR + '/etc/conf.d' do | file |
@@ -58,7 +49,18 @@ Vagrant.configure(2) do |conf|
       include_conf BASE_DIR + '/etc/conf.d/' + file, conf
     end
   end
-  
+
+  # always output guest machine information on load
+  conf.vm.provision :shell, run: 'always' do |conf|
+    conf.name = "vm-info"
+    conf.inline = "
+      # use info from eth1 if available, otherwise eth0
+      interface=$(ifconfig eth1 | grep 'inet addr' > /dev/null 2>&1 && echo eth1 || echo eth0)
+      ip_address=$(ifconfig $interface | grep 'inet addr' | awk -F: '{print $2}' | awk '{print $1}')
+      printf 'ip address: %s\nhostname: %s\n' \"$ip_address\" \"$(hostname)\"
+    "
+  end
+
   # verify with user before allowing a halt to take place
   conf.trigger.before :halt do
     confirm = nil
@@ -67,7 +69,7 @@ Vagrant.configure(2) do |conf|
     end
     exit unless confirm.upcase == "Y"
   end
-  
+
   # verify with user before allowing a rebuild to take place
   conf.trigger.before :rebuild do
     confirm = nil
@@ -77,7 +79,7 @@ Vagrant.configure(2) do |conf|
     end
     exit unless confirm.upcase == "Y"
   end
-  
+
   # kill vagrant destroy command as a safegaurd
   unless File.exist? BASE_DIR + '/etc/assassin.flag' or ENV['VAGRANT_ASSASSIN'] == "true"
     conf.trigger.reject :destroy do
