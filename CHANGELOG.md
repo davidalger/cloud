@@ -1,6 +1,6 @@
 # Vagrant Cloud
 
--- unreleased --
+1.0.0
 ==========
 
 * Changed web stack to nginx -> varnish -> nginx -> php-fpm setup.
