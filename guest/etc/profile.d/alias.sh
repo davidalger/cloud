@@ -9,50 +9,15 @@
  ##
 
 ########################################
-# host specific aliases
-
-if [ -f "/etc/.vagranthost" ]; then
-    
-    # general shortcuts
-    alias st="open -a sourcetree"
-    alias togglehidden='SET="com.apple.finder AppleShowAllFiles"; VAL=YES && [ "$(defaults read $SET)" == "YES" ] && VAL=NO; defaults write $SET $VAL; killall Finder'
-    
-    if [ -x /System/Library/CoreServices/Applications/Network\ Utility.app/Contents/Resources/stroke ]; then
-        alias stroke="/System/Library/CoreServices/Applications/Network\ Utility.app/Contents/Resources/stroke"
-    fi
-    if [ -x "$(which dtrace)" ]; then
-        alias iotrace="sudo dtrace -n 'syscall::open*:entry { printf(\"%s %s\",execname,copyinstr(arg0)); }'"
-    fi
-
-fi
-
-########################################
-# vm specific aliases
-# if [ ! -f "/etc/.vagranthost" ]; then
-    # vm specific aliases should be added here
-# fi
-
-########################################
 # generic aliases
 
-# generic shortcuts
-alias php-debug="php -d xdebug.remote_autostart=on"
 alias trail="tail -f"
-
-# file manipulation
-alias crlf-to-lf="find ./ -type f | grep -vE '.svn/|.git/' | xargs -n1 perl -p -i -e 's/\r\n/\n/g'"
-alias rsyncf="rsync --exclude-from ~/.rsync_excludes"
-alias udiff="diff -urB \$1 \$2 | grep -v 'Only in' | grep -v 'diff ' | sed -E 's#(---|\+\+\+) /.*/htdocs/(.*)#\1 \2#g'"
-alias mdiff="diff -Bbwr -I ' \*.*'"
-
-# magento shortcuts
 alias mreports='grep -rE ^a: var/report/ | cut -d '\''#'\'' -f 1 | cut -d '\'';'\'' -f 2 | sort | uniq -c | sort -n'
 alias mexceptions='ack "^Exception" "$1" | sort | uniq -c | sort -nr | vi -c "set nowrap" -'
-# alias flush-cache-storage="php -r \"require_once 'app/Mage.php'; umask(0); Mage::app()->getCacheInstance()->flush();\""
-# alias flush-cache="php -r \"require_once 'app/Mage.php'; umask(0); Mage::app()->cleanCache();\""
-# alias cron-reset="find var/cache/ -type f -name '*CRON*' -print0 | xargs -0 rm"
 
+########################################
 # setup git aliases if they do not exist
+
 if [ -x "$(which git 2> /dev/null)" ]; then
     if [ "$(git config --global --get alias.permission-reset)" = "" ]; then
         git config --global --add alias.permission-reset \

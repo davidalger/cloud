@@ -15,18 +15,20 @@
 export MAGE_IS_DEVELOPER_MODE=0
 export MAGE_MODE=production
 
-# set central composer home
-export COMPOSER_HOME=/vagrant/etc/composer
-
 # configure PATH to use local and user scripts
 export PATH=~/bin:/usr/local/bin:$PATH:/usr/local/sbin
 
-# enbale color-ls emulation
+# Fancy PS1 with flashing username / red path for root login
+if [[ $EUID -ne 0 ]]; then
+    export PS1='\[\033[0;36m\]\u@\h\[\033[0m\]:\@:\[\033[0;37m\]\w\[\033[0m\]$ '
+else
+    export PS1='\[\033[0;5m\]\u@\h\[\033[0m\]:\@:\[\033[0;31m\]\w\[\033[0m\]# '
+fi
+
+# Color output
 export CLICOLOR=1
+export LSCOLORS=ExFxCxDxBxegedabagacad
 
 # Allow for easy searching of history
 bind '"\e[A":history-search-backward'
 bind '"\e[B":history-search-forward'
-
-# setup rvm if present
-[ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
