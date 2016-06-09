@@ -13,6 +13,7 @@
 * Added 2nd sandbox node for dev purposes.
 * Removed add_knonw_hosts include script (any nodes using this will need configure.sh updated).
 * Added letsencrypt ssl setup so certbot is ready and available to use generating ssl certs.
+* Added informational message with ip and hostname info to print on each reload.
 
 0.2.1
 ==========

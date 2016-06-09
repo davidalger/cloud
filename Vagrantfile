@@ -49,7 +49,18 @@ Vagrant.configure(2) do |conf|
       include_conf BASE_DIR + '/etc/conf.d/' + file, conf
     end
   end
-  
+
+  # always output guest machine information on load
+  conf.vm.provision :shell, run: 'always' do |conf|
+    conf.name = "vm-info"
+    conf.inline = "
+      # use info from eth1 if available, otherwise eth0
+      interface=$(ifconfig eth1 | grep 'inet addr' > /dev/null 2>&1 && echo eth1 || echo eth0)
+      ip_address=$(ifconfig $interface | grep 'inet addr' | awk -F: '{print $2}' | awk '{print $1}')
+      printf 'ip address: %s\nhostname: %s\n' \"$ip_address\" \"$(hostname)\"
+    "
+  end
+
   # verify with user before allowing a halt to take place
   conf.trigger.before :halt do
     confirm = nil
@@ -58,7 +69,7 @@ Vagrant.configure(2) do |conf|
     end
     exit unless confirm.upcase == "Y"
   end
-  
+
   # verify with user before allowing a rebuild to take place
   conf.trigger.before :rebuild do
     confirm = nil
@@ -68,7 +79,7 @@ Vagrant.configure(2) do |conf|
     end
     exit unless confirm.upcase == "Y"
   end
-  
+
   # kill vagrant destroy command as a safegaurd
   unless File.exist? BASE_DIR + '/etc/assassin.flag' or ENV['VAGRANT_ASSASSIN'] == "true"
     conf.trigger.reject :destroy do
