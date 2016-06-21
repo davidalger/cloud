@@ -2,6 +2,8 @@
 /vendor/
 
 /etc/*
+!/etc/filters/
+!/etc/keys/
 !/etc/config.rb.example
 !/etc/defaults.rb
 !/etc/conf.d/
