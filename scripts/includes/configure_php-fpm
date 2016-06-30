@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+rsync -a $VAGRANT_DIR/etc/php-fpm.d/ /etc/php-fpm.d/
+chown -R root:root /etc/php-fpm.d/
+
+service php-fpm reload

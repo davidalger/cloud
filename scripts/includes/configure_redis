@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+service redis stop
+
+mv /etc/redis.conf /etc/redis.conf.bk
+[ -d /etc/redis ] || mkdir /etc/redis
+rsync -a $VAGRANT_DIR/etc/redis/ /etc/redis/
+chown -R root:root /etc/redis/
+
+mkdir -p /var/lib/redis-default
+chown redis /var/lib/redis-default
+
+mv /etc/init.d/redis /etc/redis/init.d-redis.bk
+mv /etc/redis/init.d-redis-default /etc/init.d/redis-default
+chmod +x /etc/init.d/redis-default
+
+service redis-default start
