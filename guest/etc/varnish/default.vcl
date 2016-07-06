@@ -7,7 +7,7 @@ backend default {
     .host = "localhost";
     .port = "8080";
     .first_byte_timeout = 3600s;
-    .between_bytes_timeout = 300s;
+    .between_bytes_timeout = 600s;
 }
 
 acl purge {
