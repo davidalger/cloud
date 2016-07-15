@@ -7,6 +7,7 @@ CONF_VB_ENABLE = true
 
 # Digital Ocean Configuration
 # CONF_DO_TOKEN = '<digital-ocean-api-token>'
+# CONF_DO_PK_NAME = '<digital-ocean-ssh-pub-key-name>'
 
 ########################################
 # AWS Configuration
@@ -21,3 +22,4 @@ CONF_VB_ENABLE = true
 
 # CONF_RAX_USERNAME = '<rax-username>'
 # CONF_RAX_API_KEY = '<rax-api-key>'
+# CONF_RAX_UPLOADED_KEY_NAME = '<rax-ssh-pub-key-name>'

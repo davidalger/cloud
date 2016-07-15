@@ -72,8 +72,10 @@ def provider_rack conf
       provider.rackspace_region = CONF_RAX_REGION
       provider.flavor           = CONF_RAX_FLAVOR
       provider.image            = CONF_RAX_IMAGE
+      provider.key_name         = CONF_RAX_UPLOADED_KEY_NAME
       provider.public_key_path  = CONF_RAX_PK_PUB_PATH
       conf.ssh.private_key_path = CONF_RAX_PK_PATH
+      provider.init_script      = CONF_RAX_INIT_SCRIPT
     end
   end
 end
