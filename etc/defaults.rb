@@ -34,7 +34,7 @@ unless defined? CONF_DO_REGION
 end
 
 unless defined? CONF_DO_SIZE
-  CONF_DO_SIZE = '4gb'
+  CONF_DO_SIZE = '2gb'
 end
 
 unless defined? CONF_DO_BOX_NAME
@@ -59,23 +59,20 @@ end
 ########################################
 # Rackspace Cloud Configuration
 #
-# To use RAX provider, you must manually create a CentOS 6 based image which allows sudo without a tty. To do this:
-#  1. Spin up a server based on the "CentOS 6 (PVHVM)" image via the Rackspace Cloud UI
-#  2. SSH into the box and run the following command:
-#     $ sed -i.bk -e 's/^\(Defaults\s\+requiretty\)/# \1/' /etc/sudoers
-#  3. Logout of the box and create an image named "CentOS 6 Base Image" via the Rackspace Cloud UI
-#
+# To get a list of flavor options run the following command from the shell:
+# $ vagrant rackspace flavors
 
 unless defined? CONF_RAX_REGION
   CONF_RAX_REGION = :iad
 end
 
 unless defined? CONF_RAX_FLAVOR
-  CONF_RAX_FLAVOR = '1 GB Performance'
+  CONF_RAX_FLAVOR = '1 GB General Purpose v1'
 end
 
 unless defined? CONF_RAX_IMAGE
-  CONF_RAX_IMAGE = 'CentOS 6 Base Image'
+  CONF_RAX_IMAGE = 'CentOS 6 (PVHVM)'
+#  CONF_RAX_IMAGE = 'CentOS 6 Base Image'
 end
 
 unless defined? CONF_RAX_PK_PATH
@@ -84,4 +81,10 @@ end
 
 unless defined? CONF_RAX_PK_PUB_PATH
   CONF_RAX_PK_PUB_PATH = '~/.ssh/id_rsa.pub'
+end
+
+# The default configuration of the RHEL family of Linux distributions requires a tty in order to run sudo. Vagrant does
+# not connect with a tty by default. As a workaround you can provide an init_script to remove this requirement.
+unless defined? CONF_RAX_INIT_SCRIPT
+  CONF_RAX_INIT_SCRIPT = 'sed -i\'.bk\' -e \'s/^\(Defaults\s\+requiretty\)/# \1/\' /etc/sudoers'
 end

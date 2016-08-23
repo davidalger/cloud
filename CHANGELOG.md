@@ -1,5 +1,10 @@
 # Vagrant Cloud
 
+1.0.2
+==========
+
+* Added missing etc/filters and etc/keys which totally broke v1.x
+
 1.0.1
 ==========
 
