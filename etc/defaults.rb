@@ -26,7 +26,7 @@ unless defined? CONF_DO_PK_NAME
 end
 
 unless defined? CONF_DO_IMAGE
-  CONF_DO_IMAGE = 'centos-6-5-x64' # this is really CentOS 6.7 x64
+  CONF_DO_IMAGE = 'centos-6-x64' # this is really CentOS 6.8 x64
 end
 
 unless defined? CONF_DO_REGION
