@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e
+
+rsync -a $VAGRANT_DIR/etc/letsencrypt/configs/ /etc/letsencrypt/configs/
+chown -R root:root /etc/nginx/
