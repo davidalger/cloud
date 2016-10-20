@@ -75,6 +75,10 @@ unless defined? CONF_RAX_IMAGE
 #  CONF_RAX_IMAGE = 'CentOS 6 Base Image'
 end
 
+unless defined? CONF_RAX_UPLOADED_KEY_NAME
+  CONF_RAX_UPLOADED_KEY_NAME = nil
+end
+
 unless defined? CONF_RAX_PK_PATH
   CONF_RAX_PK_PATH = '~/.ssh/id_rsa'
 end
