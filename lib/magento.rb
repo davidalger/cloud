@@ -95,9 +95,6 @@ def install_magento1 (node, host: nil, path: nil, database: nil, version_name: n
       mr1 -q --skip-root-check config:set web/secure/use_in_frontend 1
       mr1 -q --skip-root-check config:set web/secure/use_in_adminhtml 1
       mr1 -q --skip-root-check cache:flush
-      
-      echo 'Fixing sample data CMS permissions bug'
-      mr1 --skip-root-check db:query \"INSERT INTO permission_block (block_name, is_allowed) VALUES ('cms/block', 'is_allowed')\"
 
       echo 'Setting file permissions and ownership'
       
