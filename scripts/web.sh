@@ -105,5 +105,7 @@ wget http://files.magerun.net/n98-magerun2-latest.phar -O /usr/local/bin/n98-mag
 chmod +x /usr/local/bin/n98-magerun
 chmod +x /usr/local/bin/n98-magerun2
 
-ln -s /usr/local/bin/n98-magerun /usr/local/bin/mr
+ln -s /usr/local/bin/n98-magerun /usr/local/bin/mr1
 ln -s /usr/local/bin/n98-magerun2 /usr/local/bin/mr2
+
+ln -s /usr/local/bin/n98-magerun /usr/local/bin/mr
