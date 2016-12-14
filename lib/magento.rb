@@ -56,7 +56,7 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
       find $INSTALL_DIR -type f -exec chmod 660 {} +
       
       chmod -R g+s $INSTALL_DIR
-      chown -R apache:nginx $INSTALL_DIR
+      chown -R www-data:www-data $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/bin/magento
       
@@ -105,7 +105,7 @@ def install_magento1 (node, host: nil, path: nil, database: nil, version_name: n
       find $INSTALL_DIR -type f -exec chmod 660 {} +
       
       chmod -R g+s $INSTALL_DIR
-      chown -R apache:nginx $INSTALL_DIR
+      chown -R www-data:www-data $INSTALL_DIR
       
       chmod +x $INSTALL_DIR/cron.sh
       
