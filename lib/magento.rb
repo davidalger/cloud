@@ -7,12 +7,40 @@
  # http://davidalger.com/contact/
  ##
 
-def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: false, sampledata: true,
-      admin_pass: nil, admin_user: 'admin')
+ # # Example of call
+ # install_magento2 node,
+ #   host: 'demo',
+ #   database: 'magento2_ce_my_theme',
+ #   path: 'v2/community-my-theme',
+ #   admin_pass: 'password',
+ #   admin_user: 'admin',
+ #   composer_package_list: [
+ #     {
+ #       package_name: "myname/theme-my-theme",
+ #       package_version: "dev-develop",
+ #       package_repository_path: "git git@bitbucket.org:myname/my-theme.git",
+ #       ssh_host: "bitbucket.org",
+ #       require_magentup_setup_upgrade: true
+ #     }
+ #   ],
+ #   install_theme_code: "MyName/MyTheme"
+
+def install_magento2 (
+  node, 
+  host: nil, 
+  path: nil, 
+  database: nil, 
+  enterprise: false, 
+  sampledata: true,
+  admin_pass: nil, 
+  admin_user: 'admin',
+  composer_package_list: [],
+  install_theme_code: nil
+  )
     
   host = host + '.' + CLOUD_DOMAIN
   flag_ee = enterprise ? ' -e ' : nil
-  flag_sd = sampledata ? ' -d ' : nil
+  flag_sd = sampledata ? ' --sampledata ' : nil
   
   node.vm.provision :shell do |conf|
     conf.name = "install_magento2:#{host}/#{path}"
@@ -22,8 +50,53 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
       opt_urlpath = "--urlpath=#{path}"
     end
     
+    composer_packages=''
+    package_repositories=''
+    ssh_host_keys=''
+    if composer_package_list.length > 0
+      run_setup_upgrade_flag=false
+      composer_package_list.each { |package|
+          if package.key?(:ssh_host)
+            ssh_host_keys.concat("
+            [ $(cat ~/.ssh/known_hosts | grep #{package[:ssh_host]} | wc -l) -eq 0 ] && ssh-keyscan #{package[:ssh_host]} >> ~/.ssh/known_hosts
+            ")
+          end
+          if package.key?(:package_repository_path)
+            package_repositories.concat("
+            composer config repositories.#{package[:package_name]} #{package[:package_repository_path]}
+            ")
+          end
+          composer_packages.concat("
+          composer require #{package[:package_name]}:#{package[:package_version]}
+          ")
+          if package.key?(:require_magentup_setup_upgrade)
+            run_setup_upgrade_flag=true
+          end
+      }
+      if run_setup_upgrade_flag
+        composer_packages.concat("
+        bin/magento setup:upgrade -q
+        ")
+      end
+    end
+    
+    theme_package_installation=''
+    if install_theme_code
+      theme_package_installation="
+      echo 'setting theme #{install_theme_code} as the default theme'
+      # After installing the theme a db upgrade is required to populate the theme table in the db with
+      # a record so we can query the db for a theme_id to set
+      bin/magento setup:db-data:upgrade -q
+      THEME_ID=$(
+        echo \"select theme_id from theme where code = '#{install_theme_code}';\" \
+        | mysql -D #{database} --batch --skip-column-names --default-character-set=utf8
+      )
+      mr2 config:set design/theme/theme_id ${THEME_ID}
+      "
+    end
+    
     conf.inline = "
-      set -e
+      set -ex
       
       cd #{VAGRANT_DIR}
       source ./scripts/lib/utils.sh
@@ -36,19 +109,74 @@ def install_magento2 (node, host: nil, path: nil, database: nil, enterprise: fal
       export ADMIN_PASS='#{admin_pass}'
       
       echo 'Running subscript: m2setup.sh'
-      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} #{opt_urlpath} --admin-user=#{admin_user}
+      m2setup.sh \
+          #{flag_sd} \
+          #{flag_ee} \
+          --hostname=#{host} \
+          #{opt_urlpath} \
+          --admin-user=#{admin_user} \
+          --secure-everywhere \
+          --no-compile
       ln -s $INSTALL_DIR/pub $INSTALL_DIR/pub/pub     # todo: remove temp fix when GH Issue #2711 is resolved
+      
+      cd $INSTALL_DIR
+      
+      echo 'Installing any composer repositories and packages'
+      
+      #{ssh_host_keys}
+      #{package_repositories}
+      #{composer_packages}
+      
+      echo 'Initializing any composer magento themes'
+      #{theme_package_installation}
+      
+      
       
       echo 'Initializing software configuration'
       
-      cd $INSTALL_DIR
+      bin/magento deploy:mode:set --skip-compilation production
+      
+      mr2 -q --skip-root-check config:set dev/css/merge_css_files 1
+      mr2 -q --skip-root-check config:set dev/js/merge_files 1
+      mr2 -q --skip-root-check config:set dev/static/sign 1
+      mr2 -q --skip-root-check config:set web/secure/use_in_adminhtml 1
+      mr2 -q --skip-root-check config:set web/secure/use_in_frontend 1
+      mr2 -q --skip-root-check config:set web/cookie/cookie_lifetime 604800
+      mr2 -q --skip-root-check config:set admin/security/session_lifetime 604800
+      mr2 -q --skip-root-check config:set admin/security/password_is_forced 0
+      
       mr2 -q --skip-root-check setup:config:set --no-interaction --http-cache-hosts=127.0.0.1:6081
       mr2 -q --skip-root-check config:set system/full_page_cache/caching_application 2
       mr2 -q --skip-root-check config:set system/full_page_cache/ttl 604800
       mr2 -q --skip-root-check config:set system/full_page_cache/varnish/access_list localhost
       mr2 -q --skip-root-check config:set system/full_page_cache/varnish/backend_host localhost
       mr2 -q --skip-root-check config:set system/full_page_cache/varnish/backend_port 8080
+      
       mr2 -q --skip-root-check cache:flush
+      
+      
+      
+      echo '==> Compiling DI and generating static content'
+      rm -rf var/di/ var/generation/
+      # Magento 2.0.x required usage of multi-tenant compiler (see here for details: http://bit.ly/21eMPtt).
+      # Magento 2.1 dropped support for the multi-tenant compiler, so we must use the normal compiler.
+      if [ `bin/magento setup:di:compile-multi-tenant --help &> /dev/null; echo $?` -eq 0 ]; then
+          bin/magento setup:di:compile-multi-tenant -q
+      else
+          bin/magento setup:di:compile -q
+      fi
+      [ ! -f pub/static/deployed_version.txt ] && touch pub/static/deployed_version.txt
+      bin/magento setup:static-content:deploy --jobs 1 -q
+      # set environment variable so it exists during the next execution of static-content:deploy
+      export https=on
+      bin/magento setup:static-content:deploy \
+          --jobs 1 \
+          --no-javascript --no-css --no-less --no-images --no-fonts --no-html --no-misc --no-html-minify \
+           -q
+      
+      bin/magento cache:flush -q
+      
+      
       
       echo 'Setting file permissions and ownership'
       
@@ -89,13 +217,13 @@ def install_magento1 (node, host: nil, path: nil, database: nil, version_name: n
           --dbHost localhost --dbUser root --dbName #{database} #{flag_sd} --baseUrl http://#{host}/#{path}
       
       echo 'Initializing software configuration'
-
+      
       cd $INSTALL_DIR
       mr1 -q --skip-root-check config:set web/secure/base_url https://#{host}/#{path}/
       mr1 -q --skip-root-check config:set web/secure/use_in_frontend 1
       mr1 -q --skip-root-check config:set web/secure/use_in_adminhtml 1
       mr1 -q --skip-root-check cache:flush
-
+      
       echo 'Setting file permissions and ownership'
       
       find $INSTALL_DIR -type d -exec chmod 770 {} +
