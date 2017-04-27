@@ -40,7 +40,7 @@ def install_magento2 (
     
   host = host + '.' + CLOUD_DOMAIN
   flag_ee = enterprise ? ' -e ' : nil
-  flag_sd = sampledata ? ' --sampledata ' : nil
+  flag_sd = sampledata ? ' -d ' : nil
   
   node.vm.provision :shell do |conf|
     conf.name = "install_magento2:#{host}/#{path}"
@@ -96,7 +96,7 @@ def install_magento2 (
     end
     
     conf.inline = "
-      set -ex
+      set -e
       
       cd #{VAGRANT_DIR}
       source ./scripts/lib/utils.sh
