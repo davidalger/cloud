@@ -61,6 +61,7 @@ DAEMON_OPTS="-a ${VARNISH_LISTEN_ADDRESS}:${VARNISH_LISTEN_PORT} \
              -t ${VARNISH_TTL} \
              -p thread_pool_min=${VARNISH_MIN_THREADS} \
              -p thread_pool_max=${VARNISH_MAX_THREADS} \
+             -p http_resp_hdr_len=64000 \
              -S ${VARNISH_SECRET_FILE} \
              -s ${VARNISH_STORAGE} \
              -p cli_buffer=16384"
