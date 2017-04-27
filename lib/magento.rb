@@ -109,14 +109,8 @@ def install_magento2 (
       export ADMIN_PASS='#{admin_pass}'
       
       echo 'Running subscript: m2setup.sh'
-      m2setup.sh \
-          #{flag_sd} \
-          #{flag_ee} \
-          --hostname=#{host} \
-          #{opt_urlpath} \
-          --admin-user=#{admin_user} \
-          --secure-everywhere \
-          --no-compile
+      m2setup.sh #{flag_sd} #{flag_ee} --hostname=#{host} #{opt_urlpath} \
+              --admin-user=#{admin_user} --secure-everywhere --no-compile
       ln -s $INSTALL_DIR/pub $INSTALL_DIR/pub/pub     # todo: remove temp fix when GH Issue #2711 is resolved
       
       cd $INSTALL_DIR
@@ -129,8 +123,6 @@ def install_magento2 (
       
       echo 'Initializing any composer magento themes'
       #{theme_package_installation}
-      
-      
       
       echo 'Initializing software configuration'
       
@@ -148,13 +140,8 @@ def install_magento2 (
       mr2 -q --skip-root-check setup:config:set --no-interaction --http-cache-hosts=127.0.0.1:6081
       mr2 -q --skip-root-check config:set system/full_page_cache/caching_application 2
       mr2 -q --skip-root-check config:set system/full_page_cache/ttl 604800
-      mr2 -q --skip-root-check config:set system/full_page_cache/varnish/access_list localhost
-      mr2 -q --skip-root-check config:set system/full_page_cache/varnish/backend_host localhost
-      mr2 -q --skip-root-check config:set system/full_page_cache/varnish/backend_port 8080
       
       mr2 -q --skip-root-check cache:flush
-      
-      
       
       echo '==> Compiling DI and generating static content'
       rm -rf var/di/ var/generation/
@@ -169,14 +156,9 @@ def install_magento2 (
       bin/magento setup:static-content:deploy --jobs 1 -q
       # set environment variable so it exists during the next execution of static-content:deploy
       export https=on
-      bin/magento setup:static-content:deploy \
-          --jobs 1 \
-          --no-javascript --no-css --no-less --no-images --no-fonts --no-html --no-misc --no-html-minify \
-           -q
-      
+      bin/magento setup:static-content:deploy -q --jobs 1 \
+          --no-javascript --no-css --no-less --no-images --no-fonts --no-html --no-misc --no-html-minify
       bin/magento cache:flush -q
-      
-      
       
       echo 'Setting file permissions and ownership'
       
