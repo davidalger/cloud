@@ -20,7 +20,11 @@
  #       package_version: "dev-develop",
  #       package_repository_path: "git git@bitbucket.org:myname/my-theme.git",
  #       ssh_host: "bitbucket.org",
- #       require_magentup_setup_upgrade: true
+ #       require_magentup_setup_upgrade: true,
+ #       enable_magento_extension: "MyName_MyExtension",
+ #       additional_commands_to_execute: [
+ #         "bin/magento myname:myspecial:customcommand"
+ #       ]
  #     }
  #   ],
  #   install_theme_code: "MyName/MyTheme"
@@ -54,30 +58,39 @@ def install_magento2 (
     package_repositories=''
     ssh_host_keys=''
     if composer_package_list.length > 0
-      run_setup_upgrade_flag=false
       composer_package_list.each { |package|
-          if package.key?(:ssh_host)
-            ssh_host_keys.concat("
-            [ $(cat ~/.ssh/known_hosts | grep #{package[:ssh_host]} | wc -l) -eq 0 ] && ssh-keyscan #{package[:ssh_host]} >> ~/.ssh/known_hosts
-            ")
-          end
-          if package.key?(:package_repository_path)
-            package_repositories.concat("
-            composer config repositories.#{package[:package_name]} #{package[:package_repository_path]}
-            ")
-          end
-          composer_packages.concat("
-          composer require #{package[:package_name]}:#{package[:package_version]}
+        if package.key?(:ssh_host)
+          ssh_host_keys.concat("
+          [ $(cat ~/.ssh/known_hosts | grep #{package[:ssh_host]} | wc -l) -eq 0 ] && ssh-keyscan #{package[:ssh_host]} >> ~/.ssh/known_hosts
           ")
-          if package.key?(:require_magentup_setup_upgrade)
-            run_setup_upgrade_flag=true
-          end
-      }
-      if run_setup_upgrade_flag
+        end
+        if package.key?(:package_repository_path)
+          package_repositories.concat("
+          composer config repositories.#{package[:package_name]} #{package[:package_repository_path]}
+          ")
+        end
         composer_packages.concat("
-        bin/magento setup:upgrade -q
+        composer require #{package[:package_name]}:#{package[:package_version]}
         ")
-      end
+        if package.key?(:enable_magento_extension)
+          composer_packages.concat("
+          bin/magento module:enable --clear-static-content #{package[:enable_magento_extension]} -q
+          ")
+        end
+        if package.key?(:require_magentup_setup_upgrade)
+          composer_packages.concat("
+          bin/magento setup:upgrade -q
+          bin/magento cache:flush -q
+          ")
+        end
+        if package.key?(:additional_commands_to_execute)
+          package[:additional_commands_to_execute].each { |additional_command|
+            composer_packages.concat("
+            #{additional_command}
+            ")
+          }
+        end
+      }
     end
     
     theme_package_installation=''
