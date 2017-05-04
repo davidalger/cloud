@@ -39,7 +39,8 @@ def install_magento2 (
   admin_pass: nil, 
   admin_user: 'admin',
   composer_package_list: [],
-  install_theme_code: nil
+  install_theme_code: nil,
+  extra_configs: []
   )
     
   host = host + '.' + CLOUD_DOMAIN
@@ -108,6 +109,15 @@ def install_magento2 (
       "
     end
     
+    additional_configurations=''
+    if extra_configs.length > 0
+      extra_configs.each { |additional_config|
+        additional_configurations.concat("
+        #{additional_config}
+        ")
+      }
+    end
+    
     conf.inline = "
       set -e
       
@@ -154,6 +164,8 @@ def install_magento2 (
       mr2 -q --skip-root-check config:set system/full_page_cache/caching_application 2
       mr2 -q --skip-root-check config:set system/full_page_cache/ttl 604800
       
+      #{additional_configurations}
+            
       mr2 -q --skip-root-check cache:flush
       
       echo '==> Compiling DI and generating static content'
