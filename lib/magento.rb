@@ -20,7 +20,11 @@
  #       package_version: "dev-develop",
  #       package_repository_path: "git git@bitbucket.org:myname/my-theme.git",
  #       ssh_host: "bitbucket.org",
- #       require_magentup_setup_upgrade: true
+ #       require_magentup_setup_upgrade: true,
+ #       enable_magento_extension: "MyName_MyExtension",
+ #       additional_commands_to_execute: [
+ #         "bin/magento myname:myspecial:customcommand"
+ #       ]
  #     }
  #   ],
  #   install_theme_code: "MyName/MyTheme"
@@ -35,9 +39,10 @@ def install_magento2 (
   admin_pass: nil, 
   admin_user: 'admin',
   composer_package_list: [],
-  install_theme_code: nil
+  install_theme_code: nil,
+  extra_configs: []
   )
-    
+  
   host = host + '.' + CLOUD_DOMAIN
   flag_ee = enterprise ? ' -e ' : nil
   flag_sd = sampledata ? ' -d ' : nil
@@ -54,30 +59,39 @@ def install_magento2 (
     package_repositories=''
     ssh_host_keys=''
     if composer_package_list.length > 0
-      run_setup_upgrade_flag=false
       composer_package_list.each { |package|
-          if package.key?(:ssh_host)
-            ssh_host_keys.concat("
-            [ $(cat ~/.ssh/known_hosts | grep #{package[:ssh_host]} | wc -l) -eq 0 ] && ssh-keyscan #{package[:ssh_host]} >> ~/.ssh/known_hosts
-            ")
-          end
-          if package.key?(:package_repository_path)
-            package_repositories.concat("
-            composer config repositories.#{package[:package_name]} #{package[:package_repository_path]}
-            ")
-          end
-          composer_packages.concat("
-          composer require #{package[:package_name]}:#{package[:package_version]}
+        if package.key?(:ssh_host)
+          ssh_host_keys.concat("
+          [ $(cat ~/.ssh/known_hosts | grep #{package[:ssh_host]} | wc -l) -eq 0 ] && ssh-keyscan #{package[:ssh_host]} >> ~/.ssh/known_hosts
           ")
-          if package.key?(:require_magentup_setup_upgrade)
-            run_setup_upgrade_flag=true
-          end
-      }
-      if run_setup_upgrade_flag
+        end
+        if package.key?(:package_repository_path)
+          package_repositories.concat("
+          composer config repositories.#{package[:package_name]} #{package[:package_repository_path]}
+          ")
+        end
         composer_packages.concat("
-        bin/magento setup:upgrade -q
+        composer require --prefer-dist #{package[:package_name]}:#{package[:package_version]}
         ")
-      end
+        if package.key?(:enable_magento_extension)
+          composer_packages.concat("
+          bin/magento module:enable --clear-static-content #{package[:enable_magento_extension]} -q
+          ")
+        end
+        if package.key?(:require_magentup_setup_upgrade)
+          composer_packages.concat("
+          bin/magento setup:upgrade -q
+          bin/magento cache:flush -q
+          ")
+        end
+        if package.key?(:additional_commands_to_execute)
+          package[:additional_commands_to_execute].each { |additional_command|
+            composer_packages.concat("
+            #{additional_command}
+            ")
+          }
+        end
+      }
     end
     
     theme_package_installation=''
@@ -93,6 +107,15 @@ def install_magento2 (
       )
       mr2 config:set design/theme/theme_id ${THEME_ID}
       "
+    end
+    
+    additional_configurations=''
+    if extra_configs.length > 0
+      extra_configs.each { |additional_config|
+        additional_configurations.concat("
+        #{additional_config}
+        ")
+      }
     end
     
     conf.inline = "
@@ -141,22 +164,18 @@ def install_magento2 (
       mr2 -q --skip-root-check config:set system/full_page_cache/caching_application 2
       mr2 -q --skip-root-check config:set system/full_page_cache/ttl 604800
       
+      #{additional_configurations}
+            
       mr2 -q --skip-root-check cache:flush
       
-      echo '==> Compiling DI and generating static content'
+      echo 'Compiling DI and generating static content'
       rm -rf var/di/ var/generation/
-      # Magento 2.0.x required usage of multi-tenant compiler (see here for details: http://bit.ly/21eMPtt).
-      # Magento 2.1 dropped support for the multi-tenant compiler, so we must use the normal compiler.
-      if [ `bin/magento setup:di:compile-multi-tenant --help &> /dev/null; echo $?` -eq 0 ]; then
-          bin/magento setup:di:compile-multi-tenant -q
-      else
-          bin/magento setup:di:compile -q
-      fi
+      
+      bin/magento setup:di:compile -q
+      
       [ ! -f pub/static/deployed_version.txt ] && touch pub/static/deployed_version.txt
-      bin/magento setup:static-content:deploy --jobs 1 -q
-      # set environment variable so it exists during the next execution of static-content:deploy
-      export https=on
-      bin/magento setup:static-content:deploy -q --jobs 1 \
+      bin/magento setup:static-content:deploy -q
+      HTTPS=on bin/magento setup:static-content:deploy -q \
           --no-javascript --no-css --no-less --no-images --no-fonts --no-html --no-misc --no-html-minify
       bin/magento cache:flush -q
       
