@@ -42,7 +42,7 @@ def install_magento2 (
   install_theme_code: nil,
   extra_configs: []
   )
-    
+  
   host = host + '.' + CLOUD_DOMAIN
   flag_ee = enterprise ? ' -e ' : nil
   flag_sd = sampledata ? ' -d ' : nil
@@ -71,7 +71,7 @@ def install_magento2 (
           ")
         end
         composer_packages.concat("
-        composer require #{package[:package_name]}:#{package[:package_version]}
+        composer require --prefer-dist #{package[:package_name]}:#{package[:package_version]}
         ")
         if package.key?(:enable_magento_extension)
           composer_packages.concat("
@@ -168,20 +168,14 @@ def install_magento2 (
             
       mr2 -q --skip-root-check cache:flush
       
-      echo '==> Compiling DI and generating static content'
+      echo 'Compiling DI and generating static content'
       rm -rf var/di/ var/generation/
-      # Magento 2.0.x required usage of multi-tenant compiler (see here for details: http://bit.ly/21eMPtt).
-      # Magento 2.1 dropped support for the multi-tenant compiler, so we must use the normal compiler.
-      if [ `bin/magento setup:di:compile-multi-tenant --help &> /dev/null; echo $?` -eq 0 ]; then
-          bin/magento setup:di:compile-multi-tenant -q
-      else
-          bin/magento setup:di:compile -q
-      fi
+      
+      bin/magento setup:di:compile -q
+      
       [ ! -f pub/static/deployed_version.txt ] && touch pub/static/deployed_version.txt
-      bin/magento setup:static-content:deploy --jobs 1 -q
-      # set environment variable so it exists during the next execution of static-content:deploy
-      export https=on
-      bin/magento setup:static-content:deploy -q --jobs 1 \
+      bin/magento setup:static-content:deploy -q
+      HTTPS=on bin/magento setup:static-content:deploy -q \
           --no-javascript --no-css --no-less --no-images --no-fonts --no-html --no-misc --no-html-minify
       bin/magento cache:flush -q
       
